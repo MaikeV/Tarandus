@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-navigation-drawer v-model="drawer" app clipped>
+        <v-navigation-drawer v-model="drawer" app clipped color="blue accent-4">
             <v-list dense>
                 <NavbarItem linkto="/" title="Dashboard">
                     <v-icon>mdi-view-dashboard</v-icon>
@@ -16,18 +16,12 @@
                 </NavbarItem>
             </v-list>
         </v-navigation-drawer>
-        <v-app-bar app clipped-left class="blue-darken-4">
+        <v-app-bar app clipped-left color="blue darken-4">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title>Tarandus</v-toolbar-title>
         </v-app-bar>
-        <v-container class="content" fluid>
-            <v-row dense>
-                <v-col v-for="card in cards" :key="card.title" :cols="card.flex">
-                    <v-card class="flex">
-                        <slot></slot>
-                    </v-card>
-                </v-col>
-            </v-row>
+        <v-container class="content fill-height pa-0" fluid>
+            <slot></slot>
         </v-container>
     </v-app>
 </template>
