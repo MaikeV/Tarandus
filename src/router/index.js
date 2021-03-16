@@ -6,8 +6,12 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    name: 'Editor',
+    name: 'Overview',
     component: () => import( '../views/Overview.vue')
+  },{
+    path: '/editor',
+    name: 'Editor',
+    component: () => import( '../views/Writer.vue')
   },
   {
     path: '/settings',
