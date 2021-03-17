@@ -2,7 +2,7 @@
     <v-container fluid class="fill-height mb-6 pa-0">
         <v-row no-gutters class="fill-height">
             <v-col cols="1">
-                <FileMenu/>
+                <ChapterMenu/>
             </v-col>
             <v-divider vertical/>
             <v-col>
@@ -18,13 +18,13 @@
 
 <script>
     import Ebitor from "./../components/Editor"
-    import FileMenu from "../components/FileMenu";
     import Preview from "../components/Preview";
+    import ChapterMenu from "../components/ChapterMenu";
     export default {
         name: "Editor",
         components: {
             Preview,
-            FileMenu,
+            ChapterMenu,
             Ebitor
         }
     }

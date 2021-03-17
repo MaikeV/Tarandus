@@ -1,6 +1,10 @@
 <template>
     <v-container fluid class="content">
-        <v-row>
+        <v-row >
+            <v-col cols="2"></v-col>
+            <v-col>
+                <v-btn dark @click="openDialogue()">New Module</v-btn>
+            </v-col>
             <v-col></v-col>
         </v-row>
         <v-row>
@@ -39,12 +43,16 @@
             </v-col>
             <v-col cols="2"></v-col>
         </v-row>
+        <ModuleDialog/>
     </v-container>
 </template>
 
 <script>
+    import store from '../store'
+    import ModuleDialog from "./ModuleDialog";
     export default {
         name: "OverviewList",
+        components: {ModuleDialog},
         data: () => ({
             items: [
                 {
@@ -64,6 +72,11 @@
 
             ]
         }),
+        methods: {
+            openDialogue() {
+                store.commit('misc/switch')
+            },
+        }
     }
 </script>
 

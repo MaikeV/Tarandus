@@ -70,7 +70,7 @@
                             </v-col>
                             <v-spacer></v-spacer>
                             <v-col>
-                                
+
                             </v-col>
                         </v-row>
                     </v-container>
