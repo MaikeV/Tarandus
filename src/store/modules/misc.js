@@ -5,7 +5,7 @@ const state = () => ({
 
 const mutations = {
     switch(state) {
-        state.dialog = state.dialog ? false : true
+        state.dialog = !state.dialog
     },
 }
 

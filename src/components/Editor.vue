@@ -14,7 +14,7 @@
                                 </v-btn>
                             </v-col>
                             <v-col>
-                                <v-btn-toggle v-model="toggle_multiple" background-color="primary" small dark multiple class="ma-0">
+                                <v-btn-toggle v-model="format" background-color="primary" small dark multiple class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bold() }" @click.stop="commands.bold">
                                         <v-icon small>mdi-format-bold</v-icon>
                                     </v-btn>
@@ -30,7 +30,7 @@
                                 </v-btn-toggle>
                             </v-col>
                             <v-col>
-                                <v-btn-toggle v-model="toggle_one" mandatory background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle v-model="size" mandatory background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.paragraph() }" @click.stop="commands.paragraph">
                                         <v-icon small>mdi-format-text-variant</v-icon>
                                     </v-btn>
@@ -46,7 +46,7 @@
                                 </v-btn-toggle>
                             </v-col>
                             <v-col>
-                                <v-btn-toggle v-model="toggle_none" background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle v-model="special" background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.code() }" @click.stop="commands.code">
                                         <v-icon small>mdi-code-tags</v-icon>
                                     </v-btn>
@@ -59,7 +59,7 @@
                                 </v-btn-toggle>
                             </v-col>
                             <v-col>
-                                <v-btn-toggle v-model="toggle_none" background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle v-model="list" background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bullet_list() }" @click.stop="commands.bullet_list">
                                         <v-icon small>mdi-format-list-bulleted</v-icon>
                                     </v-btn>

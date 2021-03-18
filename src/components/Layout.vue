@@ -38,7 +38,7 @@
         },
         data: () => ({
             cards: [{title: 'test'}],
-            drawer: null
+            drawer: false
         }),
         created() {
             this.$vuetify.theme.themes.dark.primary = colors.blue.darken4;
