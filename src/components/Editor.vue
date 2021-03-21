@@ -1,4 +1,4 @@
-<template>
+<template v-slot:>
     <div class="editor">
         <v-app-bar color="blue darken-3">
             <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
@@ -13,23 +13,25 @@
                                     <v-icon>mdi-redo</v-icon>
                                 </v-btn>
                             </v-col>
-                            <v-col>
-                                <v-btn-toggle v-model="format" background-color="primary" small dark multiple class="ma-0">
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bold() }" @click.stop="commands.bold">
-                                        <v-icon small>mdi-format-bold</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.italic() }" @click.stop="commands.italic">
-                                        <v-icon small>mdi-format-italic</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.underline() }" @click.stop="commands.underline">
-                                        <v-icon small>mdi-format-underline</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.strike() }" @click.stop="commands.strike">
-                                        <v-icon small>mdi-format-strikethrough</v-icon>
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </v-col>
-                            <v-col>
+                            <template v-if="sectionType === 'text'">
+                                <v-col>
+                                    <v-btn-toggle v-model="format" background-color="primary" small dark multiple class="ma-0">
+                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bold() }" @click.stop="commands.bold">
+                                            <v-icon small>mdi-format-bold</v-icon>
+                                        </v-btn>
+                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.italic() }" @click.stop="commands.italic">
+                                            <v-icon small>mdi-format-italic</v-icon>
+                                        </v-btn>
+                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.underline() }" @click.stop="commands.underline">
+                                            <v-icon small>mdi-format-underline</v-icon>
+                                        </v-btn>
+                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.strike() }" @click.stop="commands.strike">
+                                            <v-icon small>mdi-format-strikethrough</v-icon>
+                                        </v-btn>
+                                    </v-btn-toggle>
+                                </v-col>
+                            </template>
+                            <v-col v-if="sectionType === 'text'">
                                 <v-btn-toggle v-model="size" mandatory background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.paragraph() }" @click.stop="commands.paragraph">
                                         <v-icon small>mdi-format-text-variant</v-icon>
@@ -58,7 +60,7 @@
                                     </v-btn>
                                 </v-btn-toggle>
                             </v-col>
-                            <v-col>
+                            <v-col v-if="sectionType === 'text'">
                                 <v-btn-toggle v-model="list" background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bullet_list() }" @click.stop="commands.bullet_list">
                                         <v-icon small>mdi-format-list-bulleted</v-icon>
@@ -77,19 +79,30 @@
                 </div>
             </editor-menu-bar>
         </v-app-bar>
-        <editor-content class="editor__content" :editor="editor"/>
+        <v-container class="fill-height flex-nowrap">
+            <editor-content class="editor__content" :editor="editor"/>
+        </v-container>
+
     </div>
 </template>
 
 <script>
     import {Editor, EditorContent, EditorMenuBar} from 'tiptap'
-    import {Bold, Italic, Underline, Strike, Code, CodeBlock, Heading, BulletList, OrderedList, ListItem, Blockquote, History} from 'tiptap-extensions'
+    import {Bold, Italic, Underline, Strike, Code, CodeBlock, Heading, BulletList, OrderedList, ListItem, Blockquote, History, Focus} from 'tiptap-extensions'
 
     export default {
         name: "Ebitor",
         components: {
             EditorContent,
             EditorMenuBar,
+        },
+        props: {
+            sectionType: {
+                type: String,
+            }
+        },
+        propsData: {
+            sectionType: 'text'
         },
         data() {
             return {
@@ -107,7 +120,12 @@
                         new Heading({levels: [2, 3, 4]}),
                         new ListItem(),
                         new Blockquote(),
+                        new Focus({
+                           className: 'has-focus',
+                           nested: false,
+                        }),
                     ],
+                    autoFocus: true,
                     content: '<p>Initial editor content</p>'
                 })
             }
@@ -119,5 +137,15 @@
 </script>
 
 <style scoped>
+    .editor__content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .has-focus {
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px dodgerblue;
+    }
 
 </style>

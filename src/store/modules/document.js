@@ -1,5 +1,5 @@
 const state = () => ({
-    selectedDocument: {'name': '', 'chapter': ''},
+    selectedDocument: {'name': '', 'chapter': '', 'content': ''},
     documents: [
         {
             name: 'Practical 1'

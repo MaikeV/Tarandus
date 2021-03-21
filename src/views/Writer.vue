@@ -5,11 +5,11 @@
                 <ChapterMenu/>
             </v-col>
             <v-divider vertical/>
-            <v-col>
-                <Ebitor/>
+            <v-col cols="6">
+                <Ebitor class="flex-nowrap"/>
             </v-col>
             <v-divider vertical/>
-            <v-col>
+            <v-col cols="5">
                 <Preview/>
             </v-col>
         </v-row>
