@@ -48,7 +48,7 @@
                                     <v-col>
                                         <v-list two-line>
                                             <v-list-item-group v-model="selected" active-class="blue--text">
-                                                <template v-for="document in documents">
+                                                <template v-for="(document, index) in documents">
                                                     <v-list-item :key="document.name">
                                                         <v-list-item-content>
                                                             <v-list-item-title v-text="document.name"></v-list-item-title>
