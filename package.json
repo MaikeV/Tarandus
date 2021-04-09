@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "highlight.js": "^10.7.1",
+    "prosemirror-commands": "^1.1.7",
     "tiptap": "^1.32.1",
     "tiptap-commands": "^1.17.1",
     "tiptap-extensions": "^1.35.1",

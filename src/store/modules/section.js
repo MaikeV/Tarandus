@@ -1,6 +1,6 @@
 const state = () => ({
     activeSection: {
-        type: {},
+        type: 'text',
         content: {}
     },
     sections: [],

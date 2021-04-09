@@ -9,12 +9,33 @@
             </v-icon>
         </template>
     </v-treeview>
+<!--    <v-treeview v-model="chapterTree" :items="chapter" open-on-click>-->
+<!--        <template v-slot:prepend="{ chap, open }">-->
+<!--            <v-icon></v-icon>-->
+
+<!--        </template>-->
+<!--    </v-treeview>-->
 </template>
 
 <script>
+    // import store from '../store'
+    import Ebitor from './Editor'
+
     export default {
         name: "FileMenu",
+        methods: {
+
+        },
         data: () => ({
+            chapter: {
+
+            },
+            onUpdate: () => {
+                Ebitor.getDocumentContent()
+
+            }
+        }),
+        data2: () => ({
             initiallyOpen: ['public'],
             files: {
                 html: 'mdi-language-html5',

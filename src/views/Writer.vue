@@ -1,15 +1,15 @@
 <template>
     <v-container fluid class="fill-height mb-6 pa-0">
         <v-row no-gutters class="fill-height">
-            <v-col cols="1">
+            <v-col cols="2">
                 <ChapterMenu/>
             </v-col>
             <v-divider vertical/>
-            <v-col cols="6">
+            <v-col>
                 <Ebitor class="flex-nowrap"/>
             </v-col>
             <v-divider vertical/>
-            <v-col cols="5">
+            <v-col>
                 <Preview/>
             </v-col>
         </v-row>
