@@ -1,7 +1,7 @@
 <template>
     <v-container class="pa-0 ma-0">
         <v-app-bar color="blue darken-3">
-            <v-btn icon @click="setContent">
+            <v-btn icon @click="getDocumentContent()">
                 <v-icon>mdi-refresh</v-icon>
             </v-btn>
             <v-toolbar-title>Preview</v-toolbar-title>
@@ -19,24 +19,22 @@
 
 <script>
     import store from '../store'
-    //import Ebitor from './Editor'
 
     export default {
         name: "Preview",
+        computed: {
+            documentContent() {
+                return store.state.document.selectedDocument.content
+            }
+        },
         methods: {
-            setJson(attr) {
-                this.json = attr
+            getDocumentContent() {
+                this.json = this.documentContent
             }
         },
         data() {
             return {
                 json: store.state.document.selectedDocument.content,
-                onUpdate: () => {
-                    //this.json = Ebitor.getDocumentContent()
-
-                    // console.log(this.getDocumentContent())
-                }
-
             }
         },
     }

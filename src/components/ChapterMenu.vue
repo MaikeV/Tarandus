@@ -1,40 +1,50 @@
 <template>
-    <v-treeview v-model="tree" :open="initiallyOpen" :items="items" activatable item-key="name" open-on-click>
-        <template v-slot:prepend="{ item, open }">
-            <v-icon v-if="!item.file">
-                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-            </v-icon>
-            <v-icon v-else>
-                {{ files[item.file] }}
-            </v-icon>
-        </template>
-    </v-treeview>
-<!--    <v-treeview v-model="chapterTree" :items="chapter" open-on-click>-->
-<!--        <template v-slot:prepend="{ chap, open }">-->
-<!--            <v-icon></v-icon>-->
-
+<!--    <v-treeview  activatable item-key="name" open-on-click>-->
+<!--        <template v-slot:prepend="{ item, open }">-->
+<!--            <v-icon v-if="!item.file">-->
+<!--                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}-->
+<!--            </v-icon>-->
+<!--            <v-icon v-else>-->
+<!--                {{ files[item.file] }}-->
+<!--            </v-icon>-->
 <!--        </template>-->
 <!--    </v-treeview>-->
+    <v-treeview v-model="tree" :items="chapter" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
+        <template v-slot:prepend="{ item }">
+            <v-icon v-if="item.type === 'code_block'">mdi-code-tags</v-icon>
+            <v-icon v-else-if="item.type === 'heading'">mdi-bookmark-outline</v-icon>
+            <v-icon v-else>mdi-card-text-outline</v-icon>
+        </template>
+    </v-treeview>
 </template>
 
 <script>
-    // import store from '../store'
+    import store from '../store'
     import Ebitor from './Editor'
+
 
     export default {
         name: "FileMenu",
-        methods: {
-
-        },
-        data: () => ({
-            chapter: {
-
-            },
-            onUpdate: () => {
-                Ebitor.getDocumentContent()
-
+        computed: {
+            chapter() {
+                return store.state.document.selectedDocument.content.content
             }
-        }),
+        },
+        methods: {
+            parseChapters() {
+                console.log(JSON.parse(this.chapter.content).text)
+                return JSON.parse(this.chapter.content).text
+            }
+        },
+        data() {
+            return {
+                tree: [],
+                onUpdate: () => {
+                    Ebitor.getDocumentContent()
+
+                }
+            }
+        },
         data2: () => ({
             initiallyOpen: ['public'],
             files: {

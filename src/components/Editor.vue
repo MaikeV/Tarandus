@@ -39,7 +39,7 @@
                             <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
                             <template v-if="sectionType === 'text'">
                                 <v-col>
-                                    <v-btn-toggle v-model="format" background-color="primary" small dark multiple class="ma-0">
+                                    <v-btn-toggle background-color="primary" small dark multiple class="ma-0">
                                         <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bold() }" @click.stop="commands.bold">
                                             <v-icon small>mdi-format-bold</v-icon>
                                         </v-btn>
@@ -56,7 +56,7 @@
                                 </v-col>
                             </template>
                             <v-col v-if="sectionType === 'text'">
-                                <v-btn-toggle v-model="size" mandatory background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle mandatory background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.paragraph() }" @click.stop="commands.paragraph">
                                         <v-icon small>mdi-format-text-variant</v-icon>
                                     </v-btn>
@@ -72,7 +72,7 @@
                                 </v-btn-toggle>
                             </v-col>
                             <v-col v-if="sectionType === 'code'">
-                                <v-btn-toggle v-model="codeLang" background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle background-color="primary" small dark class="ma-0">
                                     <v-tooltip top color="secondary">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-btn small icon class="menubar__button" v-bind="attrs" v-on="on">
@@ -156,7 +156,7 @@
                                 </v-btn-toggle>
                             </v-col>
                             <v-col v-if="sectionType === 'text'">
-                                <v-btn-toggle v-model="specialText" background-color="primary" small dark class="ma-0">
+                                <v-btn-toggle background-color="primary" small dark class="ma-0">
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.code() }" @click.stop="commands.code">
                                         <v-icon small>mdi-code-tags</v-icon>
                                     </v-btn>
@@ -181,7 +181,7 @@
             </editor-menu-bar>
         </v-app-bar>
 <!--        <v-virtual-scroll>-->
-            <v-container v-on:keydown.ctrl.enter="setSectionType('text')">
+            <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
                 <editor-content class="editor__content fill-height" :editor="editor"/>
             </v-container>
 <!--        </v-virtual-scroll>-->
@@ -199,7 +199,6 @@
     import shell from 'highlight.js/lib/languages/shell'
     import yaml from 'highlight.js/lib/languages/yaml'
     import makefile from 'highlight.js/lib/languages/makefile'
-    //import darcula from 'highlight.js/styles/darcula.css'
 
     import {
         Editor,
@@ -212,7 +211,6 @@
       Underline,
       Strike,
       Code,
-      // CodeBlock,
       CodeBlockHighlight,
       Heading,
       BulletList,
@@ -222,10 +220,8 @@
       History,
       Focus,
     } from 'tiptap-extensions'
-    // import Section from "./Extensions/Section";
-    // import { setBlockType } from 'prosemirror-commands';
+
     import store from '../store'
-    import Preview from "./Preview";
 
     export default {
         name: "Ebitor",
@@ -237,36 +233,36 @@
             sectionType() {
                 return store.state.section.activeSection.type === undefined ? 'text' : store.state.section.activeSection.type;
             },
+            activeSection() {
+                return store.state.document.activeSection
+            },
+            documentContent() {
+                return store.state.document.selectedDocument.content
+            }
         },
         methods: {
+            getSelectedSectionType() {
+                if (this.$el.querySelector('.has-focus').tagName === 'PRE') {
+                    console.log(this.$el.querySelector('.has-focus').tagName)
+                    this.setSectionType('code')
+                } else{
+                    console.log(this.$el.querySelector('.has-focus').tagName)
+                    this.setSectionType('text')
+                }
+            },
             setSectionType(attr) {
                 store.commit('section/set', attr)
-
+                console.log('test')
                 if (attr === 'text') {
-                    console.log(0);
                     return this.toggleSectionType = 0
                 }
                 else {
                     return this.toggleSectionType = 1
                 }
-            },
-            getSectionType() {
-                // if( {//isActive.code_block) {
-                //     this.setSectionType('code')
-                // } else {
-                //     this.setSectionType('text')
-                // }
 
-                return store.state.section.activeSection.type
             },
             setDocumentContent(content) {
                 store.commit('document/setContent', content)
-            },
-            getDocumentContent() {
-                return store.state.document.selectedDocument.content
-            },
-            getActiveSection() {
-                return store.state.document.activeSection
             },
             setActiveSection() {
                 store.commit('document/getActiveSection')
@@ -325,13 +321,10 @@
                         },),
                     ],
                     autoFocus: true,
-                    content: this.getDocumentContent() === '' ? '<p>Type Here</p>' : this.getDocumentContent(),
+                    content: this.documentContent === '' ? '<p>Type Here</p>' : this.documentContent,
                     onUpdate: ({ getJSON }) => {
                         this.setDocumentContent(getJSON())
-                        Preview.setJson(getJSON(), this.getSectionType())
-                        // console.log(this.getDocumentContent())
-
-                        console.log(this.editor.activeNodes.name)
+                        this.getSelectedSectionType()
                     }
                 })
             }

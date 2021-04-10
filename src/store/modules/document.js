@@ -1,7 +1,7 @@
 
 
 const state = () => ({
-    selectedDocument: {name: '', content: ''},
+    selectedDocument: {name: '', content: {}},
     documents: [
         {
             name: 'Practical 1'
