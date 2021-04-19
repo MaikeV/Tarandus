@@ -34,7 +34,6 @@
         name: "Layout",
         components: {
             NavbarItem
-
         },
         data: () => ({
             cards: [{title: 'test'}],

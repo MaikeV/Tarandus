@@ -13,6 +13,9 @@
         <template v-slot:prepend="{ item }">
             <v-icon v-if="item.type === 'code_block'">mdi-code-tags</v-icon>
             <v-icon v-else-if="item.type === 'heading'">mdi-bookmark-outline</v-icon>
+            <v-icon v-else-if="item.type === 'ordered_list'">mdi-format-list-numbered</v-icon>
+            <v-icon v-else-if="item.type === 'bullet_list'">mdi-format-list-bulleted</v-icon>
+            <v-icon v-else-if="item.type === 'expansionPanel'">mdi-chevron-down</v-icon>
             <v-icon v-else>mdi-card-text-outline</v-icon>
         </template>
     </v-treeview>
@@ -21,7 +24,6 @@
 <script>
     import store from '../store'
     import Ebitor from './Editor'
-
 
     export default {
         name: "FileMenu",
@@ -44,73 +46,7 @@
 
                 }
             }
-        },
-        data2: () => ({
-            initiallyOpen: ['public'],
-            files: {
-                html: 'mdi-language-html5',
-                js: 'mdi-nodejs',
-                json: 'mdi-code-json',
-                md: 'mdi-language-markdown',
-                pdf: 'mdi-file-pdf',
-                png: 'mdi-file-image',
-                txt: 'mdi-file-document-outline',
-                xls: 'mdi-file-excel',
-            },
-            tree: [],
-            items: [
-                {
-                    name: '.git',
-                },
-                {
-                    name: 'node_modules',
-                },
-                {
-                    name: 'public',
-                    children: [
-                        {
-                            name: 'static',
-                            children: [{
-                                name: 'logo.png',
-                                file: 'png',
-                            }],
-                        },
-                        {
-                            name: 'favicon.ico',
-                            file: 'png',
-                        },
-                        {
-                            name: 'index.html',
-                            file: 'html',
-                        },
-                    ],
-                },
-                {
-                    name: '.gitignore',
-                    file: 'txt',
-                },
-                {
-                    name: 'babel.config.js',
-                    file: 'js',
-                },
-                {
-                    name: 'package.json',
-                    file: 'json',
-                },
-                {
-                    name: 'README.md',
-                    file: 'md',
-                },
-                {
-                    name: 'vue.config.js',
-                    file: 'js',
-                },
-                {
-                    name: 'yarn.lock',
-                    file: 'txt',
-                },
-            ],
-        }),
+        }
     }
 </script>
 

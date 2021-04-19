@@ -154,6 +154,7 @@
                                         <span>Makefile</span>
                                     </v-tooltip>
                                 </v-btn-toggle>
+<!--                                <span class="text-caption ma-0 pa-0">CTRL+Enter to leave Code Block</span>-->
                             </v-col>
                             <v-col v-if="sectionType === 'text'">
                                 <v-btn-toggle background-color="primary" small dark class="ma-0">
@@ -169,11 +170,10 @@
                                     <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.blockquote() }" @click.stop="commands.blockquote">
                                       <v-icon small>mdi-format-quote-close</v-icon>
                                     </v-btn>
+                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.expansionPanel() }" @click="commands.expansionPanel">
+                                        <v-icon>mdi-chevron-down</v-icon>
+                                    </v-btn>
                                 </v-btn-toggle>
-                            </v-col>
-                            <v-spacer></v-spacer>
-                            <v-col>
-
                             </v-col>
                         </v-row>
                     </v-container>
@@ -206,20 +206,22 @@
         EditorMenuBar
     } from 'tiptap'
     import {
-      Bold,
-      Italic,
-      Underline,
-      Strike,
-      Code,
-      CodeBlockHighlight,
-      Heading,
-      BulletList,
-      OrderedList,
-      ListItem,
-      Blockquote,
-      History,
-      Focus,
+        Bold,
+        Italic,
+        Underline,
+        Strike,
+        Code,
+        CodeBlockHighlight,
+        Heading,
+        BulletList,
+        OrderedList,
+        ListItem,
+        Blockquote,
+        History,
+        Focus,
     } from 'tiptap-extensions'
+    import ExpansionPanel from "./Extensions/ExpansionPanel";
+    // import ExpansionContent from "./Extensions/ExpansionContent";
 
     import store from '../store'
 
@@ -242,6 +244,8 @@
         },
         methods: {
             getSelectedSectionType() {
+                if(this.$el.querySelector('.has-focus') === null) return
+
                 if (this.$el.querySelector('.has-focus').tagName === 'PRE') {
                     console.log(this.$el.querySelector('.has-focus').tagName)
                     this.setSectionType('code')
@@ -259,7 +263,6 @@
                 else {
                     return this.toggleSectionType = 1
                 }
-
             },
             setDocumentContent(content) {
                 store.commit('document/setContent', content)
@@ -301,6 +304,8 @@
                         new Heading({levels: [2, 3, 4]}),
                         new ListItem(),
                         new Blockquote(),
+                        new ExpansionPanel(),
+                        // new ExpansionContent(),
                         new Focus({
                            className: 'has-focus',
                            nested: false,
