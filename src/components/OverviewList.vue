@@ -35,7 +35,7 @@
                                         </span>
                                     </v-col>
                                     <v-col cols="2" class="pa-0 d-flex justify-end">
-                                        <v-btn icon outlined fab small class="mb-0 mr-2" >
+                                        <v-btn icon outlined fab small class="mb-0 mr-2" @click.stop="switchDocumentDialog()">
                                             <v-icon class="rotated">mdi-note-plus-outline</v-icon>
                                         </v-btn>
                                         <v-btn icon outlined fab small class="mr-3 ml-2">
@@ -48,20 +48,20 @@
                                     <v-col>
                                         <v-list two-line>
                                             <v-list-item-group active-class="blue--text">
-                                                <template v-for="(document, index) in documents">
-                                                    <v-list-item :key="document.name">
+                                                <template v-for="(document, index) in module.documents">
+                                                    <v-list-item :key="document.title">
                                                         <v-list-item-content>
-                                                            <v-list-item-title v-text="document.name"></v-list-item-title>
+                                                            <v-list-item-title v-text="document.title"></v-list-item-title>
                                                         </v-list-item-content>
                                                         <v-spacer></v-spacer>
-                                                        <v-btn class="ma-2" icon outlined small fab key="index" @click.stop="switchDialogue( index )">
+                                                        <v-btn class="ma-2" icon outlined small fab key="index" @click.stop="switchDocumentDialog( index )">
                                                             <v-icon>mdi-pencil</v-icon>
                                                         </v-btn>
                                                         <v-btn class="ma-2" icon outlined small fab key="index" @click.stop="switchTrash( index )">
                                                             <v-icon>mdi-trash-can-outline</v-icon>
                                                         </v-btn>
                                                     </v-list-item>
-                                                    <v-divider v-if="index < documents.length - 1" :key="document.id"></v-divider>
+                                                    <v-divider v-if="index < module.documents.length - 1" :key="document.id"></v-divider>
                                                 </template>
                                             </v-list-item-group>
                                         </v-list>
@@ -85,18 +85,21 @@
 
     export default {
         name: "OverviewList",
+        created: function () {
+            store.dispatch('module/getModules')
+        },
         components: {ModuleDialog},
         computed: {
             modules() {
                 return store.state.module.modules
             },
-            documents() {
-                return store.state.module.documents
-            }
         },
         methods: {
             openDialogue() {
                 store.commit('misc/switch')
+            },
+            switchDocumentDialog() {
+                store.commit('misc/switchDocumentDialog')
             }
         }
     }

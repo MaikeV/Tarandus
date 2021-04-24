@@ -79,25 +79,28 @@
                     store.commit('module/updateValue', ['bilingual', value])
                 }
             },
-            // modules() {
-            //     return store.state.module.modules
-            // },
-            isDuplicateModule(){
-                // return store.state.mo
+            modules() {
+                return store.state.module.modules
+            },
+            isDuplicateModule() {
+                console.log(this.moduleName)
+
+                let dup = this.modules.filter((elem) => {
+                    if(elem.name === this.moduleName) return elem
+                })
+
+                return dup.length > 0;
             }
         },
         methods: {
             switchDialog() {
-                store.commit('module/resetStatusMessage')
                 store.commit('misc/switch')
             },
             addModule() {
                 store.dispatch('module/postSelected')
-                //store.commit('module/add')
-            }
+            },
         },
         data: () => ({
-            // bilingual: true
         })
     }
 </script>

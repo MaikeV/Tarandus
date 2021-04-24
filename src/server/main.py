@@ -30,16 +30,53 @@ class Modules(Resource):
     def post(self):
         print(f'req: {request} data: {request.data} header: {request.headers}')
 
-        module_dict = json.loads(request.data)
+        moduleDict = json.loads(request.data)
 
-        print(module_dict)
-        print(module_dict['name'])
-
-        path = "../../files/modules/" + module_dict['name']
+        path = "../../files/modules/" + moduleDict['name']
 
         if Path(path).exists():
-            print("Module already exists")
+            print("A module  with the name " + moduleDict['name'] + "already exists")
 
             return {'status': 403}
         else:
-            Path("../../files/modules/" + module_dict['name']).mkdir(parents=False, exist_ok=True)
+            Path("../../files/modules/" + moduleDict['name']).mkdir(parents=False, exist_ok=True)
+
+            metaFile = open(path + '/' + moduleDict['name'] + ".meta", "w")
+
+            # metaFile.write('{"description": "' + moduleDict['description'] +
+            #                '", "bilingual": ' + moduleDict['bilingual'] + '}')
+            metaFile.write(json.dumps(moduleDict))
+
+            metaFile.close()
+
+            return {'status': 200}
+
+    def get(self):
+        path = "../../files/modules/"
+
+        modules = []
+
+        for elem in Path(path).iterdir():
+            print(elem)
+            if elem.is_dir():
+                print(elem.name + " istDir")
+
+                # dict = {"name": [], "description": [], "bilingual": []}
+
+                moduleName = elem.name
+
+                metaFile = open(path + "/" + moduleName + "/" + moduleName + ".meta", "r")
+                module = json.loads(metaFile.read())
+
+                docList = []
+
+                for doc in Path(path + "/" + moduleName).glob('*.json'):
+                    docString = doc.name.split(".", 1)
+                    docDict = {"title": docString[0], "format": docString[1]}
+                    docList.append(docDict)
+
+                module['documents'] = docList
+
+                modules.append(module)
+
+        return modules

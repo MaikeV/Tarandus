@@ -6,24 +6,18 @@ const state = () => ({
         {
             name: 'Module 1',
             bilingual: true,
-            description: 'Lorem Ipsum...'
+            description: 'Lorem Ipsum...',
+            documents: [
+                {
+                    title: 'Document 1',
+                    format: 'json'
+                },
+            ]
         },{
             name: 'Module 2',
             bilingual: false,
             description: '...dolor sit amet...'
         }
-    ],
-    documents: [
-        {
-            name: 'Practical 1'
-        },
-        {
-            name: 'Practical 2'
-        },
-        {
-            name: 'Practical 3'
-        }
-        //TODO: only practicals for the specific module
     ],
 })
 
@@ -38,9 +32,6 @@ const mutations = {
         let field = data[0]
         let value = data[1]
 
-        console.log(field)
-        console.log(value)
-
         state.selectedModule[field] = value
     }
 }
@@ -50,25 +41,26 @@ const actions = {
         state.documents = rootState.document.documents
     },
     postSelected({rootState}) {
-        // let content = state.selectedModule
-
-        // let options = {
-        //     url: 'http://localhost:5000/tarandus',
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     data: content,
-        // }
-
         axios.post('http://localhost:5000/tarandus/', rootState.module.selectedModule).then(response => {
                 console.log(response)
 
-                if (response.status === 403) {
-                    // rootState.module.statusMessage = "A Module with this Name already exists"
+                if(response.status === 200) {
+                    rootState.module.selectedModule = { 'name': '', 'description': '', 'bilingual': 'true' }
+                    rootState.misc.dialog = false
                 }
             }
         )
+    },
+    getModules({rootState}) {
+        console.log("testGet")
+        axios.get('http://localhost:5000/tarandus/').then(response => {
+            if(response.status === 200) {
+                // console.log(response)
+                rootState.module.modules = response.data
+
+                console.log(rootState.module.modules)
+            }
+        })
     }
 }
 
