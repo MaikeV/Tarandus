@@ -1,14 +1,14 @@
+import axios from 'axios'
+
 const state = () => ({
-    name: "",
-    description: "",
-    bilingual: true,
+    selectedModule: { 'name': '', 'description': '', 'bilingual': 'true' },
     modules: [
         {
-            title: 'Module 1',
+            name: 'Module 1',
             bilingual: true,
             description: 'Lorem Ipsum...'
         },{
-            title: 'Module 2',
+            name: 'Module 2',
             bilingual: false,
             description: '...dolor sit amet...'
         }
@@ -24,7 +24,7 @@ const state = () => ({
             name: 'Practical 3'
         }
         //TODO: only practicals for the specific module
-    ]
+    ],
 })
 
 const mutations = {
@@ -33,12 +33,42 @@ const mutations = {
     },
     getDocuments({rootState}) {
         actions.loadDocuments(rootState)
+    },
+    updateValue(state, data) {
+        let field = data[0]
+        let value = data[1]
+
+        console.log(field)
+        console.log(value)
+
+        state.selectedModule[field] = value
     }
 }
 
 const actions = {
     loadDocuments({rootState}) {
         state.documents = rootState.document.documents
+    },
+    postSelected({rootState}) {
+        // let content = state.selectedModule
+
+        // let options = {
+        //     url: 'http://localhost:5000/tarandus',
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     data: content,
+        // }
+
+        axios.post('http://localhost:5000/tarandus/', rootState.module.selectedModule).then(response => {
+                console.log(response)
+
+                if (response.status === 403) {
+                    // rootState.module.statusMessage = "A Module with this Name already exists"
+                }
+            }
+        )
     }
 }
 

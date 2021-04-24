@@ -11,13 +11,13 @@
             <v-col cols="2"></v-col>
             <v-col cols="8">
                 <template v-for="(module) in modules">
-                <v-card :key="module.title" class="ma-2">
-                    <v-expansion-panels v-model="panel" :disabled="disabled" multiple>
+                <v-card :key="module.name" class="ma-2">
+                    <v-expansion-panels multiple>
                         <v-expansion-panel>
                             <v-expansion-panel-header>
                                 <v-fade-transition leave-absolute>
                                     <v-row>
-                                        <v-col cols="4" v-text="module.title"></v-col>
+                                        <v-col cols="4" v-text="module.name"></v-col>
                                     </v-row>
                                 </v-fade-transition>
                             </v-expansion-panel-header>
@@ -47,7 +47,7 @@
                                 <v-row>
                                     <v-col>
                                         <v-list two-line>
-                                            <v-list-item-group v-model="selected" active-class="blue--text">
+                                            <v-list-item-group active-class="blue--text">
                                                 <template v-for="(document, index) in documents">
                                                     <v-list-item :key="document.name">
                                                         <v-list-item-content>
