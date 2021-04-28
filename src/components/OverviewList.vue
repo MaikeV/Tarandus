@@ -3,7 +3,7 @@
         <v-row >
             <v-col cols="2"></v-col>
             <v-col>
-                <v-btn dark @click="openDialogue()">New Module</v-btn>
+                <v-btn dark @click="openDialog()">New Module</v-btn>
             </v-col>
             <v-col></v-col>
         </v-row>
@@ -35,11 +35,14 @@
                                         </span>
                                     </v-col>
                                     <v-col cols="2" class="pa-0 d-flex justify-end">
-                                        <v-btn icon outlined fab small class="mb-0 mr-2" @click.stop="switchDocumentDialog()">
+                                        <v-btn icon outlined fab small class="mb-0 mr-2" @click.stop="switchDocumentDialog( module )">
                                             <v-icon class="rotated">mdi-note-plus-outline</v-icon>
                                         </v-btn>
-                                        <v-btn icon outlined fab small class="mr-3 ml-2">
+                                        <v-btn icon outlined fab small class="mr-3 ml-2" @click.stop="editModule()">
                                             <v-icon>mdi-pencil</v-icon>
+                                        </v-btn>
+                                        <v-btn icon outlined fab small class="mr-3 ml-2" @click.stop="switchDeleteModuleDialog( module )">
+                                            <v-icon>mdi-trash-can-outline</v-icon>
                                         </v-btn>
                                     </v-col>
                                 </v-row>
@@ -54,10 +57,10 @@
                                                             <v-list-item-title v-text="document.title"></v-list-item-title>
                                                         </v-list-item-content>
                                                         <v-spacer></v-spacer>
-                                                        <v-btn class="ma-2" icon outlined small fab key="index" @click.stop="switchDocumentDialog( index )">
+                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDocumentDialog( index )">
                                                             <v-icon>mdi-pencil</v-icon>
                                                         </v-btn>
-                                                        <v-btn class="ma-2" icon outlined small fab key="index" @click.stop="switchTrash( index )">
+                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDeleteDocumentDialog( index )">
                                                             <v-icon>mdi-trash-can-outline</v-icon>
                                                         </v-btn>
                                                     </v-list-item>
@@ -76,30 +79,43 @@
             <v-col cols="2"></v-col>
         </v-row>
         <ModuleDialog/>
+        <DocumentDialog/>
+        <DeleteModuleDialog/>
+        <DeleteDocumentDialog/>
     </v-container>
 </template>
 
 <script>
     import store from '../store'
     import ModuleDialog from "./ModuleDialog";
+    import DocumentDialog from "./DocumentDialog";
 
     export default {
         name: "OverviewList",
         created: function () {
             store.dispatch('module/getModules')
         },
-        components: {ModuleDialog},
+        components: {ModuleDialog, DocumentDialog},
         computed: {
             modules() {
                 return store.state.module.modules
             },
         },
         methods: {
-            openDialogue() {
+            editModule(module) {
+                store.commit('module/setSelectedModule', module)
+                this.openDialog()
+            },
+            openDialog() {
                 store.commit('misc/switch')
             },
-            switchDocumentDialog() {
+            switchDocumentDialog(module) {
+                store.commit('module/setSelectedModule', module)
                 store.commit('misc/switchDocumentDialog')
+            },
+            switchDeleteModuleDialog(module) {
+                store.commit('module/setSelectedModule', module)
+                store.commit('misc/switchDeleteModuleDialog')
             }
         }
     }

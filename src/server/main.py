@@ -43,10 +43,7 @@ class Modules(Resource):
 
             metaFile = open(path + '/' + moduleDict['name'] + ".meta", "w")
 
-            # metaFile.write('{"description": "' + moduleDict['description'] +
-            #                '", "bilingual": ' + moduleDict['bilingual'] + '}')
             metaFile.write(json.dumps(moduleDict))
-
             metaFile.close()
 
             return {'status': 200}
@@ -80,3 +77,20 @@ class Modules(Resource):
                 modules.append(module)
 
         return modules
+
+
+@api.route('/<string:moduleName>/')
+class Documents(Resource):
+    def post(self, moduleName):
+        path = "../../files/modules/" + moduleName
+
+        if Path(path).exists():
+            Path(path).touch()
+
+            reqDict = json.loads(request.data)
+
+            file = open(path + "/" + reqDict['title'] + '.' + reqDict['format'], 'x')
+            file.close()
+
+
+

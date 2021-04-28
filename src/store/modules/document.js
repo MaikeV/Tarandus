@@ -34,9 +34,7 @@ const mutations = {
 }
 
 const actions = {
-    getDocuments() {
-       return state.documents
-    }
+
 }
 
 export default {

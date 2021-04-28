@@ -55,6 +55,9 @@
             dialog() {
                 return store.state.misc.dialog
             },
+            documentDialog() {
+                return store.state.misc.documentDialog;
+            },
             moduleName: {
                 get() {
                     return store.state.module.selectedModule.name

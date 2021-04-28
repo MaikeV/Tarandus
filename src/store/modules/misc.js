@@ -1,6 +1,8 @@
 const state = () => ({
     dialog: false,
     documentDialog: false,
+    deleteModuleDialog: false,
+    deleteDocumentDialog: false,
     failed: []
 })
 
@@ -10,10 +12,18 @@ const mutations = {
     },
     switchDocumentDialog(state) {
         state.documentDialog = !state.documentDialog
+    },
+    switchDeleteModuleDialog(state) {
+        state.deleteModuleDialog = !state.deleteModuleDialog
+    },
+    switchDeleteDocumentDialog(state) {
+        state.deleteDocumentDialog = !state.deleteDocumentDialog
     }
 }
 
-const actions = {}
+const actions = {
+
+}
 
 export default {
     namespaced: true,

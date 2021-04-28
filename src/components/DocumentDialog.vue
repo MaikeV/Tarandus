@@ -1,9 +1,9 @@
 <template>
     <v-row>
-        <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="600px">
+        <v-dialog v-model="documentDialog" transition="dialog-bottom-transition" max-width="600px">
             <template >
                 <v-card>
-                    <v-toolbar color="primary" dark>New Module</v-toolbar>
+                    <v-toolbar color="primary" dark>New Document</v-toolbar>
                     <v-card-text>
                         <div>
                             <v-form>
@@ -21,7 +21,7 @@
                                     <v-row class="mt-0">
                                         <v-col class="d-flex justify-end">
                                             <v-btn :disabled="isDuplicateDocument" color="primary" @click="addDocument" class="mr-2">Save</v-btn>
-                                            <v-btn @click="switchDialog">Close</v-btn>
+                                            <v-btn @click="switchDocumentDialog">Close</v-btn>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -35,12 +35,45 @@
 </template>
 
 <script>
-export default {
-    name: "DocumentDialog",
-    computed: {
+    import store from '../store'
 
+    export default {
+        name: "DocumentDialog",
+        computed: {
+            title: {
+                get() {
+                    return store.state.module.newDocument.title
+                },
+                set(value) {
+                    store.state.module.newDocument.title = value
+                },
+            },
+            module() {
+                return store.state.module.selectedModule
+            },
+            documentDialog() {
+                return store.state.misc.documentDialog
+            },
+            documents() {
+                return store.state.module.selectedModule.documents
+            },
+            isDuplicateDocument() {
+                let dup = this.module.documents.filter((elem) => {
+                    if(elem.title === this.title) return elem
+                })
+
+                return dup.length > 0;
+            }
+        },
+        methods: {
+            switchDocumentDialog() {
+                store.commit('misc/switchDocumentDialog')
+            },
+            addDocument() {
+                store.dispatch('module/postDocumentSelected')
+            },
+        }
     }
-}
 </script>
 
 <style scoped>
