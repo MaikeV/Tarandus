@@ -10,10 +10,10 @@
                 <v-icon>mdi-download</v-icon>
             </v-btn>
         </v-app-bar>
-        <div class="export">
-            <h3>JSON</h3>
-            <pre><code v-html="json"></code></pre>
-        </div>
+<!--        <div class="export">-->
+<!--            <h3>JSON</h3>-->
+<!--            <pre><code v-html="json"></code></pre>-->
+<!--        </div>-->
     </v-container>
 </template>
 
@@ -24,7 +24,7 @@
         name: "Preview",
         computed: {
             documentContent() {
-                return store.state.document.selectedDocument.content
+                return store.state.document.activeDocument.content
             }
         },
         methods: {
@@ -34,7 +34,7 @@
         },
         data() {
             return {
-                json: store.state.document.selectedDocument.content,
+                json: store.state.document.activeDocument.content,
             }
         },
     }

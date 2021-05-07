@@ -1,40 +1,33 @@
+import axios from "axios";
 
 
 const state = () => ({
-    selectedDocument: {name: '', content: {}},
-    documents: [
-        {
-            name: 'Practical 1'
-        },
-        {
-            name: 'Practical 2'
-        },
-        {
-            name: 'Practical 2'
-        }
-    ],
+    activeDocument: { title: '', content: {} },
     activeSection: '',
-    sections: []
+    sections: [],
+
 })
 
 const mutations = {
     setContent(state, content) {
-        state.selectedDocument.content = content
+        console.log(content)
+
+        state.activeDocument.content = content
+    },
+    setTitle(state, title) {
+        state.activeDocument.title = title
     },
     setActiveSection(state) {
-        state.activeSection = JSON.parse(state.selectedDocument.content)
+        state.activeSection = JSON.parse(state.activeDocument.content)
 
         console.log(state.activeSection)
     },
-    getSections(state) {
-        JSON.parse(state.selectedDocument.content)
-
-        state.sections.append()
-    }
 }
 
 const actions = {
-
+    saveDoc({rootState}) {
+        axios.post('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content)
+    }
 }
 
 export default {

@@ -1,14 +1,4 @@
 <template>
-<!--    <v-treeview  activatable item-key="name" open-on-click>-->
-<!--        <template v-slot:prepend="{ item, open }">-->
-<!--            <v-icon v-if="!item.file">-->
-<!--                {{ open ? 'mdi-folder-open' : 'mdi-folder' }}-->
-<!--            </v-icon>-->
-<!--            <v-icon v-else>-->
-<!--                {{ files[item.file] }}-->
-<!--            </v-icon>-->
-<!--        </template>-->
-<!--    </v-treeview>-->
     <v-treeview v-model="tree" :items="chapter" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
         <template v-slot:prepend="{ item }">
             <v-icon v-if="item.type === 'code_block'">mdi-code-tags</v-icon>
@@ -29,7 +19,7 @@
         name: "FileMenu",
         computed: {
             chapter() {
-                return store.state.document.selectedDocument.content.content
+                return store.state.document.activeDocument.content.content
             }
         },
         methods: {

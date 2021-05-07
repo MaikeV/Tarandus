@@ -200,6 +200,8 @@
     import yaml from 'highlight.js/lib/languages/yaml'
     import makefile from 'highlight.js/lib/languages/makefile'
 
+    // import { generateHTML } from 'tiptap' // tiptap v2
+
     import {
         Editor,
         EditorContent,
@@ -231,7 +233,17 @@
             EditorContent,
             EditorMenuBar,
         },
+        created() {
+            store.commit('module/setSelectedModuleByName', this.$route.params.moduleName)
+            store.commit('module/setSelectedDocumentByTitle', this.$route.params.documentTitle)
+
+            store.dispatch('module/loadDocument')
+            this.setEditorContent(this.documentContent)
+        },
         computed: {
+            // setSelectedModule(value) {
+            //     store.commit('module/setSelectedModule', index.name= value)
+            // },
             sectionType() {
                 return store.state.section.activeSection.type === undefined ? 'text' : store.state.section.activeSection.type;
             },
@@ -239,8 +251,25 @@
                 return store.state.document.activeSection
             },
             documentContent() {
-                return store.state.document.selectedDocument.content
-            }
+                return store.state.document.activeDocument.content
+            },
+            // output() {
+            //     return generateHTML(this.documentContent, [
+            //         Bold,
+            //         Italic,
+            //         Underline,
+            //         Strike,
+            //         Code,
+            //         CodeBlockHighlight,
+            //         Heading,
+            //         BulletList,
+            //         OrderedList,
+            //         ListItem,
+            //         Blockquote,
+            //         History,
+            //         Focus,
+            //     ])
+            // } //tiptap v2
         },
         methods: {
             getSelectedSectionType() {
@@ -265,10 +294,7 @@
                 }
             },
             setDocumentContent(content) {
-                store.commit('document/setContent', content)
-            },
-            setActiveSection() {
-                store.commit('document/getActiveSection')
+              store.commit('document/setContent', content)
             },
             codeSectionPressed(commands) {
                 if(this.sectionType === 'code') return
@@ -286,7 +312,20 @@
 
                 this.setSectionType('text')
                 this.editor.focus()
+            },
+            saveDocument() {
+                store.dispatch('document/saveDoc')
+            },
+            setEditorContent(content) {
+                console.log('bla ' + content)
+
+                this.editor.setContent(content.replace(/\\/g, ""), true)
             }
+        },
+        mounted: function () {
+            window.setInterval(() => {
+                this.saveDocument()
+            }, 30000)
         },
         data() {
             return {
@@ -326,7 +365,8 @@
                         },),
                     ],
                     autoFocus: true,
-                    content: this.documentContent === '' ? '<p>Type Here</p>' : this.documentContent,
+                    content:
+                        this.documentContent === '' ? '<p>Type Here</p>' : this.documentContent,
                     onUpdate: ({ getJSON }) => {
                         this.setDocumentContent(getJSON())
                         this.getSelectedSectionType()

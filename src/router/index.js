@@ -9,8 +9,8 @@ const routes = [
     name: 'Overview',
     component: () => import( '../views/Overview.vue')
   },{
-    path: '/editor',
-    name: 'Editor',
+    path: '/editor/:moduleName/:documentTitle',
+    name: 'editor',
     component: () => import( '../views/Writer.vue')
   },
   {

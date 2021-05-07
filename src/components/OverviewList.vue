@@ -38,7 +38,7 @@
                                         <v-btn icon outlined fab small class="mb-0 mr-2" @click.stop="switchDocumentDialog( module )">
                                             <v-icon class="rotated">mdi-note-plus-outline</v-icon>
                                         </v-btn>
-                                        <v-btn icon outlined fab small class="mr-3 ml-2" @click.stop="editModule()">
+                                        <v-btn icon outlined fab small class="mr-2 ml-2" @click.stop="editModule( module )">
                                             <v-icon>mdi-pencil</v-icon>
                                         </v-btn>
                                         <v-btn icon outlined fab small class="mr-3 ml-2" @click.stop="switchDeleteModuleDialog( module )">
@@ -52,15 +52,15 @@
                                         <v-list two-line>
                                             <v-list-item-group active-class="blue--text">
                                                 <template v-for="(document, index) in module.documents">
-                                                    <v-list-item :key="document.title">
+                                                    <v-list-item :key="document.title" @dblclick="loadDocument(module, document)">
                                                         <v-list-item-content>
                                                             <v-list-item-title v-text="document.title"></v-list-item-title>
                                                         </v-list-item-content>
                                                         <v-spacer></v-spacer>
-                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDocumentDialog( index )">
+                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDocumentDialog(module, document)">
                                                             <v-icon>mdi-pencil</v-icon>
                                                         </v-btn>
-                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDeleteDocumentDialog( index )">
+                                                        <v-btn class="ma-2" icon outlined small fab @click.stop="switchDeleteDocumentDialog( module, document )">
                                                             <v-icon>mdi-trash-can-outline</v-icon>
                                                         </v-btn>
                                                     </v-list-item>
@@ -89,13 +89,25 @@
     import store from '../store'
     import ModuleDialog from "./ModuleDialog";
     import DocumentDialog from "./DocumentDialog";
+    import DeleteModuleDialog from "./DeleteModuleDialog";
+    import DeleteDocumentDialog from "./DeleteDocumentDialog";
 
     export default {
         name: "OverviewList",
         created: function () {
+            store.commit('module/resetNewDocument')
+            store.commit('module/resetSelectedDocument')
+            store.commit('module/resetSelectedModule')
+            store.commit('module/resetEditModule')
+
             store.dispatch('module/getModules')
         },
-        components: {ModuleDialog, DocumentDialog},
+        components: {
+            ModuleDialog,
+            DocumentDialog,
+            DeleteModuleDialog,
+            DeleteDocumentDialog
+        },
         computed: {
             modules() {
                 return store.state.module.modules
@@ -104,18 +116,35 @@
         methods: {
             editModule(module) {
                 store.commit('module/setSelectedModule', module)
+                store.commit('module/setEdit')
+
                 this.openDialog()
             },
             openDialog() {
                 store.commit('misc/switch')
             },
-            switchDocumentDialog(module) {
+            switchDocumentDialog(module, document) {
                 store.commit('module/setSelectedModule', module)
+
+                if(document !== undefined) {
+                    store.commit('module/setSelectedDocument', document)
+                }
+
                 store.commit('misc/switchDocumentDialog')
             },
             switchDeleteModuleDialog(module) {
                 store.commit('module/setSelectedModule', module)
                 store.commit('misc/switchDeleteModuleDialog')
+            },
+            switchDeleteDocumentDialog(module, document) {
+                store.commit('module/setSelectedModule', module)
+                store.commit('module/setSelectedDocument', document)
+                store.commit('misc/switchDeleteDocumentDialog')
+            },
+            loadDocument(module, document) {
+                store.commit('module/setSelectedModule', module)
+                store.commit('module/setSelectedDocument', document)
+                store.dispatch('module/loadDocument')
             }
         }
     }

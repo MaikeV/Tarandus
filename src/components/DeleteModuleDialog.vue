@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-dialog v-model="documentDialog" transition="dialog-bottom-transition" max-width="600px">
+        <v-dialog v-model="deleteModuleDialog" transition="dialog-bottom-transition" max-width="600px">
             <template >
                 <v-card>
                     <v-toolbar color="primary" dark>Delete Module</v-toolbar>
@@ -35,12 +35,14 @@
 </template>
 
 <script>
-
     import store from '../store'
 
     export default {
         name: "DeleteModuleDialog",
         computed: {
+            deleteModuleDialog() {
+                return store.state.misc.deleteModuleDialog
+            },
             module() {
                 return store.state.module.selectedModule
             }
@@ -48,6 +50,7 @@
         methods: {
             switchDeleteModuleDialog() {
                 store.commit('misc/switchDeleteModuleDialog')
+                store.commit('module/resetSelectedModule')
             },
             deleteModule() {
                 store.dispatch('module/deleteSelectedModule')
