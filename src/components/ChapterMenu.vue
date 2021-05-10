@@ -1,10 +1,10 @@
 <template>
     <v-treeview v-model="tree" :items="chapter" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
         <template v-slot:prepend="{ item }">
-            <v-icon v-if="item.type === 'code_block'">mdi-code-tags</v-icon>
+            <v-icon v-if="item.type === 'codeBlock'">mdi-code-tags</v-icon>
             <v-icon v-else-if="item.type === 'heading'">mdi-bookmark-outline</v-icon>
-            <v-icon v-else-if="item.type === 'ordered_list'">mdi-format-list-numbered</v-icon>
-            <v-icon v-else-if="item.type === 'bullet_list'">mdi-format-list-bulleted</v-icon>
+            <v-icon v-else-if="item.type === 'orderedList'">mdi-format-list-numbered</v-icon>
+            <v-icon v-else-if="item.type === 'bulletList'">mdi-format-list-bulleted</v-icon>
             <v-icon v-else-if="item.type === 'expansionPanel'">mdi-chevron-down</v-icon>
             <v-icon v-else>mdi-card-text-outline</v-icon>
         </template>
