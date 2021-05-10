@@ -33,7 +33,6 @@
                 tree: [],
                 onUpdate: () => {
                     Ebitor.getDocumentContent()
-
                 }
             }
         }

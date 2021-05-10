@@ -1,228 +1,221 @@
 <template>
     <v-container class="editor ma-0 pa-0">
-        <v-app-bar color="blue darken-3">
-            <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-                <div class="menubar">
-                    <v-container fluid>
-                        <v-row class="pa-0 align-center">
-                            <v-col class="ma-0 pa-0">
-                                <v-btn icon class="menubar_button" @click.stop="commands.undo">
-                                    <v-icon>mdi-undo</v-icon>
+        <v-app-bar v-if="editor" color="blue darken-3">
+            <div class="menubar">
+                <v-container fluid>
+                    <v-row class="pa-0 align-center">
+                        <v-col class="ma-0 pa-0">
+                            <v-btn icon @click="editor.chain().focus().undo().run()">
+                                <v-icon>mdi-undo</v-icon>
+                            </v-btn>
+                        </v-col>
+                        <v-col class="ma-0 pa-0">
+                            <v-btn icon @click="editor.chain().focus().redo().run()">
+                                <v-icon>mdi-redo</v-icon>
+                            </v-btn>
+                        </v-col>
+                        <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
+                        <v-col class="ma-0 pa-0">
+                            <v-btn-toggle v-model="toggleSectionType" background-color="primary" class="menubar__button" mandatory>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn :disabled="sectionType === 'text'" icon small v-bind="attrs" v-on="on" @click="textSectionPressed()">
+                                            <v-icon>mdi-format-text</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Text Section</span>
+                                </v-tooltip>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn :disabled="sectionType === 'code'" small icon class="menubar__button" v-bind="attrs" v-on="on" :class="{ 'is-active': editor.isActive('codeBlock') }" @click="codeSectionPressed()">
+                                          <v-icon>mdi-code-not-equal-variant</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Code Section</span>
+                                </v-tooltip>
+                            </v-btn-toggle>
+                        </v-col>
+                        <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
+                        <template v-if="sectionType === 'text'">
+                            <v-col>
+                                <v-btn-toggle background-color="primary" small dark multiple class="ma-0">
+                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bold') }" @click.stop="editor.chain().focus().toggleBold().run()">
+                                        <v-icon small>mdi-format-bold</v-icon>
+                                    </v-btn>
+                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('italic') }" @click.stop="editor.chain().focus().toggleItalic().run()">
+                                        <v-icon small>mdi-format-italic</v-icon>
+                                    </v-btn>
+                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('underline') }" @click.stop="editor.chain().focus().toggleUnderline().run()">
+                                        <v-icon small>mdi-format-underline</v-icon>
+                                    </v-btn>
+                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('strike') }" @click.stop="editor.chain().focus().toggleStrike().run()">
+                                        <v-icon small>mdi-format-strikethrough</v-icon>
+                                    </v-btn>
+                                </v-btn-toggle>
+                            </v-col>
+                        </template>
+                        <v-col v-if="sectionType === 'text'">
+                            <v-btn-toggle mandatory background-color="primary" small dark class="ma-0">
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('paragraph') }" @click.stop="editor.chain().focus().setParagraph().run()">
+                                    <v-icon small>mdi-format-text-variant</v-icon>
                                 </v-btn>
-                            </v-col>
-                            <v-col class="ma-0 pa-0">
-                                <v-btn icon class="menubar_button" @click.stop="commands.redo">
-                                    <v-icon>mdi-redo</v-icon>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+                                    <v-icon small>mdi-format-header-2</v-icon>
                                 </v-btn>
-                            </v-col>
-                            <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
-                            <v-col class="ma-0 pa-0">
-                                <v-btn-toggle v-model="toggleSectionType" background-color="primary" class="menubar__button" mandatory>
-                                    <v-tooltip top>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn :disabled="sectionType === 'text'" icon small v-bind="attrs" v-on="on" @click="textSectionPressed(commands)">
-                                                <v-icon>mdi-format-text</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Text Section</span>
-                                    </v-tooltip>
-                                    <v-tooltip top>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn :disabled="sectionType === 'code'" small icon class="menubar__button" v-bind="attrs" v-on="on" :class="{ 'is-active': isActive.code_block() }" @click="codeSectionPressed(commands)">
-                                              <v-icon>mdi-code-not-equal-variant</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Code Section</span>
-                                    </v-tooltip>
-                                </v-btn-toggle>
-                            </v-col>
-                            <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
-                            <template v-if="sectionType === 'text'">
-                                <v-col>
-                                    <v-btn-toggle background-color="primary" small dark multiple class="ma-0">
-                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bold() }" @click.stop="commands.bold">
-                                            <v-icon small>mdi-format-bold</v-icon>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 3 }).run()">
+                                    <v-icon small>mdi-format-header-3</v-icon>
+                                </v-btn>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 4 }).run()">
+                                    <v-icon small>mdi-format-header-4</v-icon>
+                                </v-btn>
+                            </v-btn-toggle>
+                        </v-col>
+                        <v-col v-if="sectionType === 'code'">
+                            <v-btn-toggle background-color="primary" small dark class="ma-0">
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button" v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-language-python</v-icon>
                                         </v-btn>
-                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.italic() }" @click.stop="commands.italic">
-                                            <v-icon small>mdi-format-italic</v-icon>
+                                    </template>
+                                    <span>Python</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-language-go</v-icon>
                                         </v-btn>
-                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.underline() }" @click.stop="commands.underline">
-                                            <v-icon small>mdi-format-underline</v-icon>
+                                        </template>
+                                    <span>Go</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-language-cpp</v-icon>
                                         </v-btn>
-                                        <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.strike() }" @click.stop="commands.strike">
-                                            <v-icon small>mdi-format-strikethrough</v-icon>
+                                    </template>
+                                    <span>C++</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-language-javascript</v-icon>
                                         </v-btn>
-                                    </v-btn-toggle>
-                                </v-col>
-                            </template>
-                            <v-col v-if="sectionType === 'text'">
-                                <v-btn-toggle mandatory background-color="primary" small dark class="ma-0">
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.paragraph() }" @click.stop="commands.paragraph">
-                                        <v-icon small>mdi-format-text-variant</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.heading({level: 2}) }" @click.stop="commands.heading({level: 2})">
-                                        <v-icon small>mdi-format-header-2</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.heading({level: 3}) }" @click.stop="commands.heading({level: 3})">
-                                        <v-icon small>mdi-format-header-3</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.heading({level: 4}) }" @click.stop="commands.heading({level: 4})">
-                                        <v-icon small>mdi-format-header-4</v-icon>
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </v-col>
-                            <v-col v-if="sectionType === 'code'">
-                                <v-btn-toggle background-color="primary" small dark class="ma-0">
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button" v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-language-python</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Python</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-language-go</v-icon>
-                                            </v-btn>
-                                            </template>
-                                        <span>Go</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-language-cpp</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>C++</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-language-javascript</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>JavaScript</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-language-html5</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>HTML</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-bash</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Bash</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-powershell</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Shell</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-docker</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Dockerfile</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-wrench-outline</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>yaml</span>
-                                    </v-tooltip>
-                                    <v-tooltip top color="secondary">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
-                                                <v-icon small>mdi-file-cog-outline</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <span>Makefile</span>
-                                    </v-tooltip>
-                                </v-btn-toggle>
+                                    </template>
+                                    <span>JavaScript</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-language-html5</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>HTML</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-bash</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Bash</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-powershell</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Shell</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-docker</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Dockerfile</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-wrench-outline</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>yaml</span>
+                                </v-tooltip>
+                                <v-tooltip top color="secondary">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn small icon class="menubar__button"  v-bind="attrs" v-on="on">
+                                            <v-icon small>mdi-file-cog-outline</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Makefile</span>
+                                </v-tooltip>
+                            </v-btn-toggle>
 <!--                                <span class="text-caption ma-0 pa-0">CTRL+Enter to leave Code Block</span>-->
-                            </v-col>
-                            <v-col v-if="sectionType === 'text'">
-                                <v-btn-toggle background-color="primary" small dark class="ma-0">
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.code() }" @click.stop="commands.code">
-                                        <v-icon small>mdi-code-tags</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.bullet_list() }" @click.stop="commands.bullet_list">
-                                        <v-icon small>mdi-format-list-bulleted</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.ordered_list() }" @click.stop="commands.ordered_list">
-                                        <v-icon small>mdi-format-list-numbered</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.blockquote() }" @click.stop="commands.blockquote">
-                                      <v-icon small>mdi-format-quote-close</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': isActive.expansionPanel() }" @click="commands.expansionPanel">
-                                        <v-icon>mdi-chevron-down</v-icon>
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-                </div>
-            </editor-menu-bar>
+                        </v-col>
+                        <v-col v-if="sectionType === 'text'">
+                            <v-btn-toggle background-color="primary" small dark class="ma-0">
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('code') }" @click.stop="editor.chain().focus().toggleCode().run()">
+                                    <v-icon small>mdi-code-tags</v-icon>
+                                </v-btn>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bulletList') }" @click.stop="editor.chain().focus().toggleBulletList().run()">
+                                    <v-icon small>mdi-format-list-bulleted</v-icon>
+                                </v-btn>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('ordered_list') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
+                                    <v-icon small>mdi-format-list-numbered</v-icon>
+                                </v-btn>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('blockquote') }" @click.stop="editor.chain().focus().toggleBlockquote().run()">
+                                  <v-icon small>mdi-format-quote-close</v-icon>
+                                </v-btn>
+                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('expansionPanel') }" @click="editor.chain().focus().toggleExpansionPanel().run()">
+                                    <v-icon>mdi-chevron-down</v-icon>
+                                </v-btn>
+                            </v-btn-toggle>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </div>
         </v-app-bar>
-<!--        <v-virtual-scroll>-->
-            <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
-                <editor-content class="editor__content fill-height" :editor="editor"/>
-            </v-container>
-<!--        </v-virtual-scroll>-->
+        <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
+            <editor-content class="editor__content fill-height" :editor="editor"/>
+        </v-container>
     </v-container>
 </template>
 
 <script>
-    import javascript from 'highlight.js/lib/languages/javascript'
-    import cpp from 'highlight.js/lib/languages/cpp'
-    import python from 'highlight.js/lib/languages/python'
-    import bash from 'highlight.js/lib/languages/bash'
-    import html from 'highlight.js/lib/languages/htmlbars'
-    import go from 'highlight.js/lib/languages/go'
-    import dockerfile from 'highlight.js/lib/languages/dockerfile'
-    import shell from 'highlight.js/lib/languages/shell'
-    import yaml from 'highlight.js/lib/languages/yaml'
-    import makefile from 'highlight.js/lib/languages/makefile'
-
-    // import { generateHTML } from 'tiptap' // tiptap v2
+    // import { generateHTML } from '@tiptap/html'
 
     import {
         Editor,
         EditorContent,
-        EditorMenuBar
-    } from 'tiptap'
-    import {
-        Bold,
-        Italic,
-        Underline,
-        Strike,
-        Code,
-        CodeBlockHighlight,
-        Heading,
-        BulletList,
-        OrderedList,
-        ListItem,
-        Blockquote,
-        History,
-        Focus,
-    } from 'tiptap-extensions'
-    import ExpansionPanel from "./Extensions/ExpansionPanel";
+        VueNodeViewRenderer
+    } from '@tiptap/vue-2'
+
+    import Document from '@tiptap/extension-document'
+    import Paragraph from '@tiptap/extension-paragraph'
+    import Text from '@tiptap/extension-text'
+    import Bold from '@tiptap/extension-bold'
+    import Italic from '@tiptap/extension-italic'
+    import Blockquote from '@tiptap/extension-blockquote'
+    import ListItem from '@tiptap/extension-list-item'
+    import BulletList from '@tiptap/extension-bullet-list'
+    import OrderedList from '@tiptap/extension-ordered-list'
+    import Strike from '@tiptap/extension-strike'
+    import Underline from '@tiptap/extension-underline'
+    import History from '@tiptap/extension-history'
+    import Heading from '@tiptap/extension-heading'
+    import Code from '@tiptap/extension-code'
+    import CodeBlock from '@tiptap/extension-code-block'
+    import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+
+    // import StarterKit from '@tiptap/starter-kit'
+
+    import CodeBlockComponent from "./Extensions/CodeBlockComponent";
+    import lowlight from 'lowlight'
+
+    // import ExpansionPanel from "./Extensions/ExpansionPanel";
     // import ExpansionContent from "./Extensions/ExpansionContent";
 
     import store from '../store'
@@ -231,19 +224,20 @@
         name: "Ebitor",
         components: {
             EditorContent,
-            EditorMenuBar,
         },
         created() {
             store.commit('module/setSelectedModuleByName', this.$route.params.moduleName)
             store.commit('module/setSelectedDocumentByTitle', this.$route.params.documentTitle)
 
             store.dispatch('module/loadDocument')
-            this.setEditorContent(this.documentContent)
+        },
+        data() {
+            return {
+                toggleSectionType: store.state.section.activeSection.type === 'text' ? 0 : 1,
+                editor: null,
+            }
         },
         computed: {
-            // setSelectedModule(value) {
-            //     store.commit('module/setSelectedModule', index.name= value)
-            // },
             sectionType() {
                 return store.state.section.activeSection.type === undefined ? 'text' : store.state.section.activeSection.type;
             },
@@ -252,24 +246,7 @@
             },
             documentContent() {
                 return store.state.document.activeDocument.content
-            },
-            // output() {
-            //     return generateHTML(this.documentContent, [
-            //         Bold,
-            //         Italic,
-            //         Underline,
-            //         Strike,
-            //         Code,
-            //         CodeBlockHighlight,
-            //         Heading,
-            //         BulletList,
-            //         OrderedList,
-            //         ListItem,
-            //         Blockquote,
-            //         History,
-            //         Focus,
-            //     ])
-            // } //tiptap v2
+            }
         },
         methods: {
             getSelectedSectionType() {
@@ -285,7 +262,6 @@
             },
             setSectionType(attr) {
                 store.commit('section/set', attr)
-                console.log('test')
                 if (attr === 'text') {
                     return this.toggleSectionType = 0
                 }
@@ -294,20 +270,20 @@
                 }
             },
             setDocumentContent(content) {
-              store.commit('document/setContent', content)
+              store.commit('document/setContent2', content)
             },
-            codeSectionPressed(commands) {
+            codeSectionPressed() {
                 if(this.sectionType === 'code') return
 
-                commands.code_block()
+                this.editor.chain().focus().setCodeBlock().run()
                 this.setSectionType('code')
                 this.editor.focus()
             },
-            textSectionPressed(commands) {
+            textSectionPressed() {
                 if(this.sectionType === 'text') return
 
                 if(this.sectionType === 'code') {
-                    commands.code_block()
+                    this.editor.chain().focus().setCodeBlock().run()
                 }
 
                 this.setSectionType('text')
@@ -317,62 +293,64 @@
                 store.dispatch('document/saveDoc')
             },
             setEditorContent(content) {
-                console.log('bla ' + content)
+                console.log('bla ' + this.output())
 
-                this.editor.setContent(content.replace(/\\/g, ""), true)
-            }
+                this.editor.setContent(content, true)
+            },
+            getOutput() {
+                return this.output
+            },
+
         },
-        mounted: function () {
+        mounted() {
+            this.editor = new Editor({
+                extensions: [
+                    Document,
+                    Paragraph,
+                    Text,
+                    History,
+                    Bold,
+                    Italic,
+                    Underline,
+                    Strike,
+                    Code,
+                    CodeBlock,
+                    BulletList,
+                    OrderedList,
+                    ListItem,
+                    Heading,
+                    Blockquote,
+                    // StarterKit,
+
+                    // CodeBlockLowlight.configure({lowlight})
+                    CodeBlockLowlight.extend({
+                        addNodeView() {
+                            return VueNodeViewRenderer(CodeBlockComponent)
+                        },
+                    }).configure({ lowlight }),
+
+                    // new Focus({
+                    //    className: 'has-focus',
+                    //    nested: false,
+                    // }),
+                ],
+                editorProps: {
+                    attributes: {
+                        spellcheck: 'false',
+                    }
+                },
+                content:
+                    this.documentContent,
+                autofocus: true,
+                onUpdate: () => {
+                    this.setDocumentContent(this.editor.getJSON())
+                    this.getSelectedSectionType()
+                },
+            })
+
             window.setInterval(() => {
                 this.saveDocument()
             }, 30000)
-        },
-        data() {
-            return {
-                toggleSectionType: store.state.section.activeSection.type === 'text' ? 0 : 1,
-                editor: new Editor({
-                    extensions: [
-                        new History(),
-                        new Bold(),
-                        new Italic(),
-                        new Underline(),
-                        new Strike(),
-                        new Code(),
-                        new BulletList(),
-                        new OrderedList(),
-                        new Heading({levels: [2, 3, 4]}),
-                        new ListItem(),
-                        new Blockquote(),
-                        new ExpansionPanel(),
-                        // new ExpansionContent(),
-                        new Focus({
-                           className: 'has-focus',
-                           nested: false,
-                        }),
-                        new CodeBlockHighlight({
-                            languages: {
-                                javascript,
-                                cpp,
-                                python,
-                                bash,
-                                html,
-                                go,
-                                dockerfile,
-                                shell,
-                                yaml,
-                                makefile,
-                            },
-                        },),
-                    ],
-                    autoFocus: true,
-                    content:
-                        this.documentContent === '' ? '<p>Type Here</p>' : this.documentContent,
-                    onUpdate: ({ getJSON }) => {
-                        this.setDocumentContent(getJSON())
-                        this.getSelectedSectionType()
-                    }
-                })
-            }
         },
         beforeDestroy() {
             this.editor.destroy()

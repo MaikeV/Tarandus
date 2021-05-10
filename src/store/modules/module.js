@@ -186,7 +186,7 @@ const actions = {
         axios.get('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/').then(function (response) {
             if(response.status === 200) {
                 router.push({name: "editor", params: {moduleName: rootState.module.selectedModule.name, documentTitle: rootState.module.selectedDocument.title}}).then(
-                    commit('document/setContent', response.data, {root: true})
+                    commit('document/setContent', JSON.parse(response.data), {root: true})
                 ).catch(()=>{})
             }
         })

@@ -10,8 +10,9 @@ const state = () => ({
 
 const mutations = {
     setContent(state, content) {
-        console.log(content)
-
+        state.activeDocument.content = JSON.parse(content)
+    },
+    setContent2(state, content) {
         state.activeDocument.content = content
     },
     setTitle(state, title) {
@@ -19,8 +20,6 @@ const mutations = {
     },
     setActiveSection(state) {
         state.activeSection = JSON.parse(state.activeDocument.content)
-
-        console.log(state.activeSection)
     },
 }
 
