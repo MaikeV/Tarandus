@@ -2,8 +2,8 @@
     <node-view-wrapper class="expansionPanel">
         <v-expansion-panels>
             <v-expansion-panel>
-                <v-expansion-panel-header>Show Solution</v-expansion-panel-header>
-                <v-expansion-panel-content>
+                <v-expansion-panel-header contenteditable="false">Show Solution</v-expansion-panel-header>
+                <v-expansion-panel-content contenteditable="true">
                     <node-view-content class="content" as="p"/>
                 </v-expansion-panel-content>
             </v-expansion-panel>

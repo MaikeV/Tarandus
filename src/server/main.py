@@ -163,3 +163,13 @@ class Documents(Resource):
         else:
             print('Error while saving changes to document')
             return {'status': 500}
+
+
+@api.route('/compile/<string:moduleName>/<string:documentName>/')
+class Compile(Resource):
+    # Compile given document
+    def post(self, moduleName, documentName):
+        data = json.loads(request.data)
+
+        for key in data:
+            print(key + ' + ' + data[key])

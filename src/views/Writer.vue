@@ -10,7 +10,7 @@
             </v-col>
             <v-divider vertical/>
             <v-col>
-                <Preview/>
+                <Preview class="flex-nowrap"/>
             </v-col>
         </v-row>
     </v-container>
@@ -25,7 +25,7 @@
         components: {
             Preview,
             ChapterMenu,
-            Ebitor
+            Ebitor,
         }
     }
 </script>

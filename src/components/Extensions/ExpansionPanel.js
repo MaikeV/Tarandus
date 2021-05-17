@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import {VueNodeViewRenderer} from '@tiptap/vue-2'
-import ExpansionPanel from "./ExpansionPanel";
+import ExpansionPanel from "./ExpansionPanel.vue";
 
 export default Node.create({
     name: 'expansionPanel',
@@ -25,8 +25,8 @@ export default Node.create({
 
     addCommands() {
         return {
-            toggleExpansionPanel: attributes => ({ commands }) => {
-                return commands.toggleNode('expansionPanel', 'paragraph', attributes)
+            toggleExpansionPanel: () => ({ commands }) => {
+                return commands.toggleNode('expansionPanel', 'paragraph')
             },
         }
     },

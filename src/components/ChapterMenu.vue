@@ -20,6 +20,9 @@
         computed: {
             chapter() {
                 return store.state.document.activeDocument.content.content
+                // let con = store.state.document.activeDocument.content.content
+
+
             }
         },
         methods: {

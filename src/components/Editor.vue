@@ -36,63 +36,62 @@
                             </v-btn-toggle>
                         </v-col>
                         <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
-                        <template v-if="sectionType === 'text'">
-                            <v-col>
-                                <v-btn-toggle background-color="primary" small dark multiple class="ma-0">
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bold') }" @click.stop="editor.chain().focus().toggleBold().run()">
-                                        <v-icon small>mdi-format-bold</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('italic') }" @click.stop="editor.chain().focus().toggleItalic().run()">
-                                        <v-icon small>mdi-format-italic</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('underline') }" @click.stop="editor.chain().focus().toggleUnderline().run()">
-                                        <v-icon small>mdi-format-underline</v-icon>
-                                    </v-btn>
-                                    <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('strike') }" @click.stop="editor.chain().focus().toggleStrike().run()">
-                                        <v-icon small>mdi-format-strikethrough</v-icon>
-                                    </v-btn>
-                                </v-btn-toggle>
-                            </v-col>
-                        </template>
-                        <v-col v-if="sectionType === 'text'">
-                            <v-btn-toggle mandatory background-color="primary" small dark class="ma-0">
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('paragraph') }" @click.stop="editor.chain().focus().setParagraph().run()">
-                                    <v-icon small>mdi-format-text-variant</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 2 }).run()">
-                                    <v-icon small>mdi-format-header-2</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 3 }).run()">
-                                    <v-icon small>mdi-format-header-3</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 4 }).run()">
-                                    <v-icon small>mdi-format-header-4</v-icon>
-                                </v-btn>
-                            </v-btn-toggle>
-                        </v-col>
-                        <v-col v-if="sectionType === 'text'">
-                            <v-btn-toggle background-color="primary" small dark class="ma-0">
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('code') }" @click.stop="editor.chain().focus().toggleCode().run()">
-                                    <v-icon small>mdi-code-tags</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bulletList') }" @click.stop="editor.chain().focus().toggleBulletList().run()">
-                                    <v-icon small>mdi-format-list-bulleted</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('ordered_list') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
-                                    <v-icon small>mdi-format-list-numbered</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('blockquote') }" @click.stop="editor.chain().focus().toggleBlockquote().run()">
-                                  <v-icon small>mdi-format-quote-close</v-icon>
-                                </v-btn>
-                                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('expansionPanel') }" @click="editor.chain().focus().toggleExpansionPanel().run()">
-                                    <v-icon>mdi-chevron-down</v-icon>
-                                </v-btn>
-                            </v-btn-toggle>
+                        <v-col>
+                            <v-switch v-model="lang" color="secondary" value="EN"></v-switch>
                         </v-col>
                     </v-row>
                 </v-container>
             </div>
         </v-app-bar>
+        <bubble-menu :editor="editor" class="bubble-menu" v-if="editor && sectionType === 'text'">
+            <v-btn-toggle v-if="sectionType === 'text'" background-color="primary" small dark multiple class="ma-0" v-model="marks">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bold') }" @click.stop="editor.chain().focus().toggleBold().run()">
+                    <v-icon small>mdi-format-bold</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('italic') }" @click.stop="editor.chain().focus().toggleItalic().run()">
+                    <v-icon small>mdi-format-italic</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('underline') }" @click.stop="editor.chain().focus().toggleUnderline().run()">
+                    <v-icon small>mdi-format-underline</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('strike') }" @click.stop="editor.chain().focus().toggleStrike().run()">
+                    <v-icon small>mdi-format-strikethrough</v-icon>
+                </v-btn>
+            </v-btn-toggle>
+        </bubble-menu>
+        <floating-menu :editor="editor" class="floating-menu" v-if="editor">
+            <v-btn-toggle v-if="sectionType === 'text'" mandatory background-color="primary" small dark class="ma-0" v-model="textType">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('paragraph') }" @click.stop="editor.chain().focus().setParagraph().run()">
+                    <v-icon small>mdi-format-text-variant</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+                    <v-icon small>mdi-format-header-2</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 3 }).run()">
+                    <v-icon small>mdi-format-header-3</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }" @click.stop="editor.chain().focus().toggleHeading({ level: 4 }).run()">
+                    <v-icon small>mdi-format-header-4</v-icon>
+                </v-btn>
+            </v-btn-toggle>
+            <v-btn-toggle v-if="sectionType === 'text'" background-color="primary" small dark class="ma-0 ml-2" v-model="specials">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('code') }" @click.stop="editor.chain().focus().toggleCode().run()">
+                    <v-icon small>mdi-code-tags</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bulletList') }" @click.stop="editor.chain().focus().toggleBulletList().run()">
+                    <v-icon small>mdi-format-list-bulleted</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('ordered_list') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
+                    <v-icon small>mdi-format-list-numbered</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('blockquote') }" @click.stop="editor.chain().focus().toggleBlockquote().run()">
+                    <v-icon small>mdi-format-quote-close</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('expansionPanel') }" @click="editor.chain().focus().toggleExpansionPanel().run()">
+                    <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+            </v-btn-toggle>
+        </floating-menu>
         <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
             <editor-content class="editor__content fill-height" :editor="editor"/>
         </v-container>
@@ -100,12 +99,13 @@
 </template>
 
 <script>
-    // import { generateHTML } from '@tiptap/html'
 
     import {
         Editor,
         EditorContent,
-        VueNodeViewRenderer
+        VueNodeViewRenderer,
+        BubbleMenu,
+        FloatingMenu,
     } from '@tiptap/vue-2'
 
     import Document from '@tiptap/extension-document'
@@ -125,7 +125,6 @@
     import CodeBlock from '@tiptap/extension-code-block'
     import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
     import Focus from '@tiptap/extension-focus'
-    // import StarterKit from '@tiptap/starter-kit'
 
     import CodeBlockComponent from "./Extensions/CodeBlockComponent";
     import lowlight from 'lowlight'
@@ -138,6 +137,8 @@
         name: "Ebitor",
         components: {
             EditorContent,
+            BubbleMenu,
+            FloatingMenu,
         },
         created() {
             store.commit('module/setSelectedModuleByName', this.$route.params.moduleName)
@@ -149,6 +150,10 @@
             return {
                 toggleSectionType: store.state.section.activeSection.type === 'text' ? 0 : 1,
                 editor: null,
+                marks: [],
+                textType: 0,
+                specials: null,
+                lang: '',
             }
         },
         computed: {
@@ -166,7 +171,7 @@
             getSelectedSectionType() {
                 if(this.$el.querySelector('.has-focus') === null) return
 
-                if (this.$el.querySelector('.has-focus').tagName === 'PRE') {
+                if (this.$el.querySelector('.has-focus').tagName === 'DIV' && this.editor.isActive('codeBlock')) {
                     console.log(this.$el.querySelector('.has-focus').tagName)
                     this.setSectionType('code')
                 } else{
@@ -184,7 +189,7 @@
                 }
             },
             setDocumentContent(content) {
-              store.commit('document/setContent2', content)
+                store.commit('document/setContent2', content)
             },
             codeSectionPressed() {
                 if(this.sectionType === 'code') return
@@ -214,7 +219,10 @@
             getOutput() {
                 return this.output
             },
-
+            setHtml(value) {
+                console.log('bla: ' + value)
+                store.commit('document/setHTML', value)
+            }
         },
         mounted() {
             this.editor = new Editor({
@@ -257,7 +265,11 @@
                 autofocus: true,
                 onUpdate: () => {
                     this.setDocumentContent(this.editor.getJSON())
+                    // this.setActiveButtons(this.editor.getJSON())
                     this.getSelectedSectionType()
+
+                    console.log(this.editor.getHTML())
+                    this.setHtml(this.editor.getHTML())
                 },
             })
 
