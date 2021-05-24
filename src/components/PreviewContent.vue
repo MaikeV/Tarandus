@@ -1,6 +1,6 @@
 <template>
-<!--    <p v-text="output"></p>-->
-        <iframe class="preview fill-height"></iframe>
+    <p v-text="output"></p>
+<!--        <iframe class="preview fill-height"></iframe>-->
 </template>
 
 <script>

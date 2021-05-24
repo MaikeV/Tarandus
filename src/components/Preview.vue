@@ -5,7 +5,7 @@
                 <v-container fluid>
                     <v-row>
                         <v-col cols="2" class="align-center">
-                            <v-btn icon @click="setPreview" class="align-center">
+                            <v-btn icon @click="compile" class="align-center">
                                 <v-icon>mdi-refresh</v-icon>
                             </v-btn>
                         </v-col>
@@ -50,7 +50,7 @@
             },
             setPreview() {
                 console.log('set: ' + this.html)
-                this.$el.querySelector('.preview').setAttribute('srcdoc', this.html)
+                // this.$el.querySelector('.preview').setAttribute('srcdoc', this.html)
             },
             compile() {
                 store.dispatch('document/sendCompilePost')

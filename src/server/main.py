@@ -14,6 +14,8 @@ from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
 
+from logic import logic
+
 name = 'tarandus'
 description = 'Practical Editor API'
 
@@ -171,5 +173,11 @@ class Compile(Resource):
     def post(self, moduleName, documentName):
         data = json.loads(request.data)
 
-        for key in data:
-            print(key + ' + ' + data[key])
+        path = "../../files/output/" + moduleName + "_" + documentName + ".py"
+
+        print('############################### \njsonDict: ' + '\n\n')
+        # print(data['content'])
+
+        logi = logic.Logic()
+
+        logi.compile(data=data, path=path)

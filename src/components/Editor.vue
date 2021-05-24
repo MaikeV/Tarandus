@@ -58,6 +58,23 @@
                     <v-icon small>mdi-format-strikethrough</v-icon>
                 </v-btn>
             </v-btn-toggle>
+            <v-btn-toggle v-if="sectionType === 'text'" background-color="primary" small dark class="ma-0 ml-2" v-model="specials">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('code') }" @click.stop="editor.chain().focus().toggleCode().run()">
+                    <v-icon small>mdi-code-tags</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bulletList') }" @click.stop="editor.chain().focus().toggleBulletList().run()">
+                    <v-icon small>mdi-format-list-bulleted</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('orderedList') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
+                    <v-icon small>mdi-format-list-numbered</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('blockquote') }" @click.stop="editor.chain().focus().toggleBlockquote().run()">
+                    <v-icon small>mdi-format-quote-close</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('expansionPanel') }" @click="editor.chain().focus().toggleExpansionPanel().run()">
+                    <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+            </v-btn-toggle>
         </bubble-menu>
         <floating-menu :editor="editor" class="floating-menu" v-if="editor">
             <v-btn-toggle v-if="sectionType === 'text'" mandatory background-color="primary" small dark class="ma-0" v-model="textType">
@@ -81,7 +98,7 @@
                 <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('bulletList') }" @click.stop="editor.chain().focus().toggleBulletList().run()">
                     <v-icon small>mdi-format-list-bulleted</v-icon>
                 </v-btn>
-                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('ordered_list') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('orderedList') }" @click.stop="editor.chain().focus().toggleOrderedList().run()">
                     <v-icon small>mdi-format-list-numbered</v-icon>
                 </v-btn>
                 <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('blockquote') }" @click.stop="editor.chain().focus().toggleBlockquote().run()">
