@@ -8,27 +8,31 @@ class Logic:
 
                     for mark in marks:  # marks in text element
                         if mark['type'] == 'code':
-                            print('This is code')
-                            text += "''')\nbash('''" + content['text'] + "''')\nwl(r'''"
+                            # text += "''')\nbash('''" + content['text'] + "''')\nwl(r'''"
+                            text += '\n::m ' + content['text'] + '\n'
                             break
 
                         if mark['type'] == 'bold':
                             # ::b
-                            text = text + '::b ' + content['text'] + ' b:: '
+                            text = text + '\n::b ' + content['text'] + '\n'
                             print('this is bold' + content['text'])
 
-                        if mark['type'] == 'italic':
+                        elif mark['type'] == 'italic':
                             # ::k
-                            text = text + '::k ' + content['text'] + ' k:: '
+                            text = text + '\n::k ' + content['text'] + '\n'
                             print('this is italic' + content['text'])
 
-                        if mark['type'] == 'underline':
+                        elif mark['type'] == 'underline':
                             # ::u
-                            text = text + '::u ' + content['text'] + ' u:: '
+                            text = text + '\n::u ' + content['text'] + '\n'
                             print('this is underlined' + content['text'])
 
-                        if mark['type'] == 'strike':
+                        elif mark['type'] == 'strike':
                             print('this is struck' + content['text'])
+                            # TODO: include strike mark in practical tool
+
+                        else:
+                            print('Unknown mark type "' + mark['type'] + '"')
                 else:
                     text = text + content['text']
         return text
@@ -37,23 +41,20 @@ class Logic:
         text = ''
 
         for elem in data['content']:  # editor elements
-            # print(elem)
             if 'content' in elem:
                 contentList = elem['content']
                 if elem['type'] == 'paragraph':
                     text += "wl(r'''" + self.processText(contentList) + "''')\n"
-                    # print text wl(r''' ''')
                 elif elem['type'] == 'heading':
                     level = elem['attrs']['level']
                     text += "h" + str(level) + "('''" + self.processText(contentList) + "''')\n"
-                    # print with h*level*(...)
                 elif elem['type'] == 'codeBlock':
                     language = elem['attrs']['language']
 
                     if language is None:
                         language = 'None'
 
-                    text += "print('This is a codeBlock in " + language + "')\n" +\
+                    text += "print('This is a codeBlock in " + language + "')\n" + \
                             "wl(r'''" + self.processText(contentList) + "''')\n"
                 elif elem['type'] == 'blockquote':
                     for item in elem['content']:
@@ -66,7 +67,6 @@ class Logic:
                         if item['type'] == 'listItem':
                             for par in item['content']:
                                 if par['type'] == 'paragraph':
-
                                     content = par['content']
 
                                     text += "wl('''" + "- " + self.processText(content) + "\n''')\n"
@@ -85,10 +85,39 @@ class Logic:
                                     index = index + 1
                 elif elem['type'] == 'expansionPanel':
                     text += "print('This is an expansionPanel')\nwl(r'''" + self.processText(contentList) + "''')\n"
+                elif elem['type'] == 'snippet':
+                    for item in elem['content']:
+                        if item['type'] == 'text':
+                            if item['text'] == 'MoniTutor':
+                                text += 'import shared_050_monitutor_install\n\n'
+                            elif item['text'] == 'Preamble':
+                                text += 'import shared_010_asciidoc_preamble\n\n'
+                            elif item['text'] == 'General':
+                                text += 'import shared_020_generelle_anmerkungen\n\n'
+                            elif item['text'] == 'VM_Prep':
+                                text += 'from shared_030_vm_prep import *\n\n'
+                            elif item['text'] == 'UserData':
+                                text += 'import shared_040_benutzerdaten\n\n'
+                elif elem['type'] == 'command':
+                    for item in elem['content']:
+                        if item['type'] == 'text':
+                            text += item['text'] + '\n'
                 else:
                     print('Error: Unknown type ' + elem['type'] + '\n')
 
         f = open(path, 'w')
+
+        text += 'def main():\n\tctxt.out_lines = filter_multiple_empty_lines(ctxt.out_lines) +' \
+                '\n\tctxt.out_lines = rstrip_newlines(ctxt.out_lines)' + \
+                '\n\tif write_file:' + \
+                '\n\t\twith open(out_file, "w") as f:' + \
+                '\n\t\t\tfor i, line in enumerate(ctxt.out_lines):' + \
+                '\n\t\t\t\tf.write(line + "\\n")' + \
+                '\n\telse:' + \
+                '\n\t\tfor i, line in enumerate(ctxt.out_lines):' + \
+                '\n\t\t\t# print(i, line)\n\t\t\tprint(line)\n\t\t\tpass' + \
+                '\n\nif __name__ == "__main__":' + \
+                '\n\tmain()\n'
 
         f.write(text)
 

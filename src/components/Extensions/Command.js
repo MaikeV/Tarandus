@@ -1,20 +1,34 @@
-import {mergeAttributes, Node} from "@tiptap/core";
+import {Node} from "@tiptap/core";
+import {VueNodeViewRenderer} from "@tiptap/vue-2";
+import Command from "./Command.vue";
 
 export default Node.create({
     name: 'command',
     group: 'block',
-    content: 'inline*',
+    content: 'text*',
+    marks: '',
+    code: true,
+    defining: true,
+
+    defaultOptions: {
+        HTMLAttributes: {},
+    },
 
     parseHTML() {
         return [
             {
-                tag: 'p'
+                tag: 'pre',
+                preserveWhitespace: 'full',
             }
         ]
     },
 
+    addNodeView() {
+        return VueNodeViewRenderer(Command)
+    },
+
     renderHTML({ HTMLAttributes }) {
-        return ['p', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
+        return ['pre', this.options.HTMLAttributes, ['code', HTMLAttributes, 0]]
     },
 
     addCommands() {

@@ -6,6 +6,8 @@
             <v-icon v-else-if="item.type === 'orderedList'">mdi-format-list-numbered</v-icon>
             <v-icon v-else-if="item.type === 'bulletList'">mdi-format-list-bulleted</v-icon>
             <v-icon v-else-if="item.type === 'expansionPanel'">mdi-chevron-down</v-icon>
+            <v-icon v-else-if="item.type === 'snippet'">mdi-slash-forward</v-icon>
+            <v-icon v-else-if="item.type === 'command'">mdi-language-python</v-icon>
             <v-icon v-else>mdi-card-text-outline</v-icon>
         </template>
     </v-treeview>

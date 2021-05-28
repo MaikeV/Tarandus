@@ -108,6 +108,14 @@
                     <v-icon>mdi-chevron-down</v-icon>
                 </v-btn>
             </v-btn-toggle>
+            <v-btn-toggle v-if="sectionType === 'text'" background-color="primary" small dark class="ma-0 ml-2" v-model="administrational">
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('snippet') }" @click.stop="editor.chain().focus().toggleSnippet().run()">
+                    <v-icon>mdi-slash-forward</v-icon>
+                </v-btn>
+                <v-btn small icon class="menubar__button" :class="{ 'is-active': editor.isActive('command') }" @click.stop="editor.chain().focus().toggleCommand().run()">
+                    <v-icon>mdi-language-python</v-icon>
+                </v-btn>
+            </v-btn-toggle>
         </floating-menu>
         <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
             <editor-content class="editor__content fill-height" :editor="editor"/>
@@ -145,8 +153,12 @@
 
     import CodeBlockComponent from "./Extensions/CodeBlockComponent";
     import lowlight from 'lowlight'
+    // import SnippetComponent from "./Extensions/Snippet.vue"
+    // import CommandComponent from "./Extensions/Command.vue"
 
     import ExpansionPanel from "./Extensions/ExpansionPanel";
+    import Snippet from "./Extensions/Snippet.js";
+    import Command from "./Extensions/Command.js";
 
     import store from '../store'
 
@@ -171,6 +183,7 @@
                 textType: 0,
                 specials: null,
                 lang: '',
+                administrational: null,
             }
         },
         computed: {
@@ -260,6 +273,20 @@
                     Heading,
                     Blockquote,
                     ExpansionPanel,
+                    Snippet,
+                    Command,
+
+                    // Snippet.extend({
+                    //     addNodeView() {
+                    //         return VueNodeViewRenderer(SnippetComponent)
+                    //     }
+                    // }),
+                    //
+                    // Command.extend({
+                    //     addNodeView() {
+                    //         return VueNodeViewRenderer(CommandComponent)
+                    //     }
+                    // }),
 
                     CodeBlockLowlight.extend({
                         addNodeView() {
