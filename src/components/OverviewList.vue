@@ -1,6 +1,6 @@
 <template>
     <v-container fluid class="content">
-        <v-row >
+        <v-row class="addModuleRow">
             <v-col cols="2"></v-col>
             <v-col>
                 <v-btn dark @click="openDialog()">New Module</v-btn>
@@ -151,6 +151,15 @@
 </script>
 
 <style scoped>
+    .addModuleRow {
+        height: 50px;
+    }
+
+    .content {
+        align-items: center;
+        justify-content: center;
+    }
+
     .rotated {
         transform: rotate(-90deg) scaleY(-1);
     }

@@ -1,5 +1,5 @@
-<template>
-  <Layout>
+<template class="all">
+  <Layout class="all">
     <router-view/>
   </Layout>
 </template>
@@ -10,3 +10,11 @@
     components: {Layout}
   }
 </script>
+
+<style>
+    .all {
+        min-height: 90vh;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>

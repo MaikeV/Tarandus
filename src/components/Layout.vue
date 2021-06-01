@@ -1,5 +1,5 @@
-<template>
-    <v-app>
+<template class="noScroll">
+    <v-app class="noScroll">
         <v-navigation-drawer v-model="drawer" app clipped color="blue accent-4">
             <v-list dense>
                 <NavbarItem linkto="/" title="Dashboard">
@@ -16,11 +16,11 @@
                 </NavbarItem>
             </v-list>
         </v-navigation-drawer>
-        <v-app-bar app clipped-left color="blue darken-4">
+        <v-app-bar app clipped-left collapse-on-scroll color="blue darken-4">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title>Tarandus</v-toolbar-title>
         </v-app-bar>
-        <v-container class="content fill-height pa-0" fluid>
+        <v-container class="content flex container--fluid pa-0 fill-height" fluid>
             <slot></slot>
         </v-container>
     </v-app>
@@ -47,6 +47,13 @@
 </script>
 
 <style scoped>
+    .noScroll {
+        position: fixed;
+        width: 100%;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+    }
+
     .content {
         margin-top: 60px;
     }

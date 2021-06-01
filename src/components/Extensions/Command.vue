@@ -19,12 +19,16 @@ export default {
 }
 </script>
 
-<style scoped>
-    .languageSign {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        color: #E3F2FD;
+<style scoped lang="scss">
+    .code-block {
+        position: relative;
+
+        p {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            color: #E3F2FD;
+        }
     }
 
     pre {

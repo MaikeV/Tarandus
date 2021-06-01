@@ -1,5 +1,5 @@
-<template>
-    <v-container fluid class="fill-height mb-6 pa-0">
+<template class="noScroll">
+    <v-container fluid class=" mb-6 pa-0  fill-height noScroll">
         <v-row no-gutters class="fill-height">
             <v-col cols="2">
                 <ChapterMenu/>
@@ -20,6 +20,7 @@
     import Ebitor from "./../components/Editor"
     import Preview from "../components/Preview";
     import ChapterMenu from "../components/ChapterMenu";
+
     export default {
         name: "Editor",
         components: {

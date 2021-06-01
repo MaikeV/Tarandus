@@ -4,16 +4,19 @@
             <div class="menubar">
                 <v-container fluid>
                     <v-row>
-                        <v-col cols="2" class="align-center">
-                            <v-btn icon @click="compile" class="align-center">
-                                <v-icon>mdi-refresh</v-icon>
-                            </v-btn>
-                        </v-col>
+<!--                        <v-col cols="2" class="align-center">-->
+<!--                            <v-btn icon  class="align-center">-->
+<!--                                <v-icon>mdi-refresh</v-icon>-->
+<!--                            </v-btn>-->
+<!--                        </v-col>-->
                         <v-col cols="8">
                             <v-toolbar-title class="text-start">Preview</v-toolbar-title>
                         </v-col>
                         <v-spacer></v-spacer>
                         <v-col cols="2" class="justify-end">
+                            <vbtn icon>
+                                <v-icon>mdi-refresh</v-icon>
+                            </vbtn>
                             <v-btn icon>
                                 <v-icon>mdi-download</v-icon>
                             </v-btn>
@@ -22,7 +25,9 @@
                 </v-container>
             </div>
         </v-app-bar>
-        <PreviewContent class="preview__content"></PreviewContent>
+        <v-container class="scrollyPollyPreview">
+            <PreviewContent class="preview__content"></PreviewContent>
+        </v-container>
     </v-container>
 </template>
 
@@ -65,6 +70,15 @@
 </script>
 
 <style scoped>
+
+    .scrollyPollyPreview {
+        overflow-y: scroll;
+        position: fixed;
+        width: 41.7%;
+        height: 87%;
+        margin-bottom: 60px;
+    }
+
     .menubar {
         width: 100%;
     }

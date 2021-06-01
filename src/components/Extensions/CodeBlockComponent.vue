@@ -46,13 +46,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.code-block {
-    position: relative;
+    .code-block {
+        position: relative;
 
-    select {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
+        select {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
     }
-}
 </style>

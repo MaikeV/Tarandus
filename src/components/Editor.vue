@@ -117,8 +117,9 @@
                 </v-btn>
             </v-btn-toggle>
         </floating-menu>
-        <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType">
-            <editor-content class="editor__content fill-height" :editor="editor"/>
+
+        <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType" class="pa-2 scrollyPolly fill-height">
+            <editor-content class="editor__content" :editor="editor"/>
         </v-container>
     </v-container>
 </template>
@@ -153,8 +154,6 @@
 
     import CodeBlockComponent from "./Extensions/CodeBlockComponent";
     import lowlight from 'lowlight'
-    // import SnippetComponent from "./Extensions/Snippet.vue"
-    // import CommandComponent from "./Extensions/Command.vue"
 
     import ExpansionPanel from "./Extensions/ExpansionPanel";
     import Snippet from "./Extensions/Snippet.js";
@@ -328,11 +327,27 @@
 </script>
 
 <style lang="scss">
+
+    .scrollyPolly {
+        overflow-y: scroll;
+        position: fixed;
+        width: 41.7%;
+        height: 87%;
+        margin-bottom: 60px;
+    }
+
+    .editor {
+        width: 100%;
+    }
+
     .editor__content {
+        //position: absolute;
+        width: 100%;
         height: 100%;
         word-wrap: break-word;
         overflow-wrap: break-word;
         word-break: break-word;
+        //overflow-y: scroll;
     }
 
     .editor__content pre{
