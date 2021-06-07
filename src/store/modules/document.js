@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const state = () => ({
-    activeDocument: { title: '', content: {} },
+    activeDocument: { title: '', content: {}, contentEnglish: {} },
     activeSection: '',
     sections: [],
     html: ''

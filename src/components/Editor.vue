@@ -1,6 +1,6 @@
 <template>
     <v-container class="editor ma-0 pa-0">
-        <v-app-bar v-if="editor" color="blue darken-3">
+        <v-app-bar v-if="editor || editorEnglish" color="blue darken-3">
             <div class="menubar">
                 <v-container fluid>
                     <v-row class="pa-0 align-center">
@@ -36,8 +36,8 @@
                             </v-btn-toggle>
                         </v-col>
                         <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
-                        <v-col>
-                            <v-switch v-model="lang" color="secondary" value="EN"></v-switch>
+                        <v-col v-if="activeModuleBilingual" class="ma-0 pa-0">
+                            <v-switch v-model="lang" class="mt-5" color="amber lighten-1" :label="`English Version: ${lang.toString()}`"></v-switch>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -119,13 +119,17 @@
         </floating-menu>
 
         <v-container v-on:keydown.ctrl="setSectionType('text')" v-on:click="getSelectedSectionType" class="pa-2 scrollyPolly fill-height">
-            <editor-content class="editor__content" :editor="editor"/>
+            <editor-content v-if="lang === false" class="editor__content" :editor="editor"/>
+            <editor-content v-else class="editor__content" :editor="editorEnglish"/>
         </v-container>
     </v-container>
+<!--    <component>-->
+<!--        <keep-alive></keep-alive>-->
+<!--    </component>-->
 </template>
 
 <script>
-
+// maybe exchange whole component for language change?? component and keepalive tag??
     import {
         Editor,
         EditorContent,
@@ -178,10 +182,11 @@
             return {
                 toggleSectionType: store.state.section.activeSection.type === 'text' ? 0 : 1,
                 editor: null,
+                editorEnglish: null,
                 marks: [],
                 textType: 0,
                 specials: null,
-                lang: '',
+                lang: false,
                 administrational: null,
             }
         },
@@ -194,6 +199,12 @@
             },
             documentContent() {
                 return store.state.document.activeDocument.content
+            },
+            documentContentEnglish() {
+                return store.state.document.activeDocument.contentEnglish
+            },
+            activeModuleBilingual() {
+                return store.state.module.selectedModule.bilingual
             }
         },
         methods: {
@@ -251,6 +262,11 @@
             setHtml(value) {
                 console.log('bla: ' + value)
                 store.commit('document/setHTML', value)
+            },
+            changeLanguage() {
+                this.lang === 'EN' ? this.lang = 'DE' : this.lang = 'EN'
+
+                console.log('language changed to ' + this.lang)
             }
         },
         mounted() {
@@ -274,18 +290,6 @@
                     ExpansionPanel,
                     Snippet,
                     Command,
-
-                    // Snippet.extend({
-                    //     addNodeView() {
-                    //         return VueNodeViewRenderer(SnippetComponent)
-                    //     }
-                    // }),
-                    //
-                    // Command.extend({
-                    //     addNodeView() {
-                    //         return VueNodeViewRenderer(CommandComponent)
-                    //     }
-                    // }),
 
                     CodeBlockLowlight.extend({
                         addNodeView() {
@@ -313,6 +317,55 @@
 
                     console.log(this.editor.getHTML())
                     this.setHtml(this.editor.getHTML())
+                },
+            })
+
+            this.editorEnglish = new Editor({
+                extensions: [
+                    Document,
+                    Paragraph,
+                    Text,
+                    History,
+                    Bold,
+                    Italic,
+                    Underline,
+                    Strike,
+                    Code,
+                    CodeBlock,
+                    BulletList,
+                    OrderedList,
+                    ListItem,
+                    Heading,
+                    Blockquote,
+                    ExpansionPanel,
+                    Snippet,
+                    Command,
+
+                    CodeBlockLowlight.extend({
+                        addNodeView() {
+                            return VueNodeViewRenderer(CodeBlockComponent)
+                        },
+                    }).configure({ lowlight }),
+
+                    Focus.configure({
+                        className: 'has-focus',
+                        nested: false,
+                    }),
+                ],
+                editorProps: {
+                    attributes: {
+                        spellcheck: 'false',
+                    }
+                },
+                content:
+                    this.documentContentEnglish,
+                autofocus: true,
+                onUpdate: () => {
+                    this.setDocumentContent(this.editorEnglish.getJSON())
+                    this.getSelectedSectionType()
+
+                    console.log(this.editor.getHTML())
+                    this.setHtml(this.editorEnglish.getHTML())
                 },
             })
 

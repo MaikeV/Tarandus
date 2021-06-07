@@ -1,29 +1,14 @@
 <template>
     <v-container class="prevCon pa-0 ma-0">
         <v-app-bar color="blue darken-3">
-            <div class="menubar">
-                <v-container fluid>
-                    <v-row>
-<!--                        <v-col cols="2" class="align-center">-->
-<!--                            <v-btn icon  class="align-center">-->
-<!--                                <v-icon>mdi-refresh</v-icon>-->
-<!--                            </v-btn>-->
-<!--                        </v-col>-->
-                        <v-col cols="8">
-                            <v-toolbar-title class="text-start">Preview</v-toolbar-title>
-                        </v-col>
-                        <v-spacer></v-spacer>
-                        <v-col cols="2" class="justify-end">
-                            <vbtn icon>
-                                <v-icon>mdi-refresh</v-icon>
-                            </vbtn>
-                            <v-btn icon>
-                                <v-icon>mdi-download</v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-container>
-            </div>
+            <v-toolbar-title >Preview</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="compile">
+                <v-icon>mdi-refresh</v-icon>
+            </v-btn>
+            <v-btn icon>
+                <v-icon>mdi-download</v-icon>
+            </v-btn>
         </v-app-bar>
         <v-container class="scrollyPollyPreview">
             <PreviewContent class="preview__content"></PreviewContent>

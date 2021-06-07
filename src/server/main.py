@@ -80,6 +80,8 @@ class Modules(Resource):
 class Modules(Resource):
     # Create document in given module
     def post(self, moduleName):
+        # moduleName = moduleName.replace(" ", "")
+
         path = "../../files/modules/" + moduleName
 
         if Path(path).exists():
@@ -92,6 +94,8 @@ class Modules(Resource):
 
     # Edit given module
     def put(self, moduleName):
+        # moduleName = moduleName.replace(" ", "")
+
         target = json.loads(request.data)
         path = "../../files/modules/"
 
@@ -109,6 +113,8 @@ class Modules(Resource):
 
     # Delete given module
     def delete(self, moduleName):
+        # moduleName = moduleName.replace(" ", "")
+
         path = "../../files/modules/" + moduleName
 
         if Path(path).exists():
@@ -124,6 +130,9 @@ class Modules(Resource):
 class Documents(Resource):
     # Delete given document in given module
     def delete(self, moduleName, documentName):
+        # moduleName = moduleName.replace(" ", "")
+        # documentName = documentName.replace(" ", "")
+
         path = "../../files/modules/" + moduleName + '/' + documentName + '.json'
 
         if Path(path).is_file():
@@ -131,6 +140,9 @@ class Documents(Resource):
 
     # Rename given document
     def put(self, moduleName, documentName):
+        # moduleName = moduleName.replace(" ", "")
+        # documentName = documentName.replace(" ", "")
+
         targetName = json.loads(request.data)
 
         print(targetName)
@@ -144,6 +156,9 @@ class Documents(Resource):
 
     # Load given document
     def get(self, moduleName, documentName):
+        # moduleName = moduleName.replace(" ", "")
+        # documentName = documentName.replace(" ", "")
+
         path = "../../files/modules/" + moduleName + '/' + documentName + ".json"
 
         file = open(path, "r")
@@ -154,7 +169,10 @@ class Documents(Resource):
 
     # Save given document
     def post(self, moduleName, documentName):
+        # moduleName = moduleName.replace(" ", "")
+        # documentName = documentName.replace(" ", "")
         path = "../../files/modules/" + moduleName + '/' + documentName + '.json'
+        pathEn = "../../files/modules/" + moduleName + '/' + documentName + '_EN.json'
         data = json.loads(request.data)
         print(request.data)
         if Path(path).is_file():
@@ -171,13 +189,17 @@ class Documents(Resource):
 class Compile(Resource):
     # Compile given document
     def post(self, moduleName, documentName):
+        moduleName = moduleName.replace(" ", "")
+        documentName = documentName.replace(" ", "")
+
         data = json.loads(request.data)
 
-        path = "../../files/output/" + moduleName + "_" + documentName + ".py"
+        fileName = moduleName + "_" + documentName + ".py"
+        path = "../../files/output/" + fileName
 
         print('############################### \njsonDict: ' + '\n\n')
         # print(data['content'])
 
         logi = logic.Logic()
 
-        logi.compile(data=data, path=path)
+        logi.compile(data=data, path=path, fileName=fileName)

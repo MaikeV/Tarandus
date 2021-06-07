@@ -1,3 +1,7 @@
+import os
+import shutil
+
+
 class Logic:
     def processText(self, contentList):
         text = ''
@@ -37,31 +41,58 @@ class Logic:
                     text = text + content['text']
         return text
 
-    def compile(self, data, path):
-        text = ''
+    def compile(self, data, path, fileName):
+        text = '# -*- coding: utf-8 -*-' + \
+            '\nwrite_file = 1' + \
+            '\n\nimport os, os.path, sys, inspect, pprint, re, time' + \
+            '\nfrom textwrap import dedent' + \
+            '\n\nscript_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))' + \
+            '\nscript_name = inspect.getfile(inspect.currentframe())' + \
+            '\nout_file = script_name.replace(".py", ".adoc")' + \
+            '\n\n# Enable importing from parent directory ...' + \
+            '\nsys.path.insert(0, os.path.dirname(script_dir))' + \
+            '\n\nimport itsdoc\nfrom itsdoc.Template import templ\nfrom itsdoc.utils import *' + \
+            '\nfrom itsdoc.directives import *' + \
+            '\n\nctxt = itsdoc.Context.ctxt\nctxt.globals = globals()' + \
+            '\n\nfrom its_data import *\nfrom sose_2021_data import *\nfrom itis_data import *' + \
+            '\nfrom support_vars import *' + \
+            '\n\n\ndef db_update(dict1, dict2):\n\tdict1.update(dict2)\n\treturn dict1' + \
+            '\n\n\ndef init_db_data():\n\treturn {' + \
+            '\n\t\t"explain": True,  # Einleitende Hilfstexte, die erklären, was das Kommando macht' + \
+            '\n\t\t"hint_at_cmds": True, # im Text: Hilfstext ...durch Eingabe des passenden Kommandos... o.ä.' + \
+            '\n\t\t"show_cmd": True , # "show_hide",  # zeige die konkreten Befehle, ggfs erst nach Aufklappen' + \
+            '\n\t\t"show_sudo": True, # zeige beim konkreten Befehl an, wenn sudo genutzt werden muss\n\t}' + \
+            '\n\n\ndb_data = init_db_data()\n\nprakt_ergebniskontrolle = True\n\n' + \
+            '\n\nheadings = ctxt.headings\n\n'
+
+# vms etc
+
+# # Dieses konkrete Praktikum...
+# topic_long = "iSCSI"
+# topic = "iSCSI"
+# count = 3
 
         for elem in data['content']:  # editor elements
             if 'content' in elem:
                 contentList = elem['content']
                 if elem['type'] == 'paragraph':
-                    text += "wl(r'''" + self.processText(contentList) + "''')\n"
+                    text += 'wl(r"""' + self.processText(contentList) + '""")\n'
                 elif elem['type'] == 'heading':
                     level = elem['attrs']['level']
-                    text += "h" + str(level) + "('''" + self.processText(contentList) + "''')\n"
+                    text += 'h' + str(level) + '("""' + self.processText(contentList) + '""")\n'
                 elif elem['type'] == 'codeBlock':
                     language = elem['attrs']['language']
 
                     if language is None:
                         language = 'None'
 
-                    text += "print('This is a codeBlock in " + language + "')\n" + \
-                            "wl(r'''" + self.processText(contentList) + "''')\n"
+                    text += 'bash(r"""' + self.processText(contentList) + '""")\n'
                 elif elem['type'] == 'blockquote':
                     for item in elem['content']:
                         if item['type'] == 'paragraph':
                             content = item['content']
 
-                            text += "print('This is a Blockquote')\n" + "wl(r'''" + self.processText(content) + "''')\n"
+                            text += 'wl(r"""' + self.processText(content) + '""")\n'
                 elif elem['type'] == 'bulletList':
                     for item in elem['content']:
                         if item['type'] == 'listItem':
@@ -69,7 +100,7 @@ class Logic:
                                 if par['type'] == 'paragraph':
                                     content = par['content']
 
-                                    text += "wl('''" + "- " + self.processText(content) + "\n''')\n"
+                                    text += 'wl("""' + '- ' + self.processText(content) + '\n""")\n'
                 elif elem['type'] == 'orderedList':
                     start = elem['attrs']['start']
 
@@ -80,11 +111,11 @@ class Logic:
                                 if par['type'] == 'paragraph':
                                     content = par['content']
 
-                                    text += "wl(r'''" + str(index) + ". " + self.processText(content) + "\n''')\n"
+                                    text += 'wl(r"""' + str(index) + '. ' + self.processText(content) + '\n""")\n'
 
                                     index = index + 1
                 elif elem['type'] == 'expansionPanel':
-                    text += "print('This is an expansionPanel')\nwl(r'''" + self.processText(contentList) + "''')\n"
+                    text += 'wl(r"""' + self.processText(contentList) + '""")\n'
                 elif elem['type'] == 'snippet':
                     for item in elem['content']:
                         if item['type'] == 'text':
@@ -107,7 +138,7 @@ class Logic:
 
         f = open(path, 'w')
 
-        text += 'def main():\n\tctxt.out_lines = filter_multiple_empty_lines(ctxt.out_lines) +' \
+        text += '\n\ndef main():\n\tctxt.out_lines = filter_multiple_empty_lines(ctxt.out_lines)' + \
                 '\n\tctxt.out_lines = rstrip_newlines(ctxt.out_lines)' + \
                 '\n\tif write_file:' + \
                 '\n\t\twith open(out_file, "w") as f:' + \
@@ -122,3 +153,9 @@ class Logic:
         f.write(text)
 
         f.close()
+
+        dstPath = "../../../../PracticalTool/itis-praktika-master/Test/" + fileName
+
+        shutil.copyfile(path, dstPath)
+
+        os.chdir()
