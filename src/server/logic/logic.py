@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 
 
 class Logic:
@@ -158,4 +159,10 @@ class Logic:
 
         shutil.copyfile(path, dstPath)
 
-        os.chdir()
+        p = subprocess.Popen(['./command.sh', '/Test/' + fileName],
+                             cwd="../../../../PracticalTool/itis-praktika-master/",
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        print(out)
+
+        p.wait()
