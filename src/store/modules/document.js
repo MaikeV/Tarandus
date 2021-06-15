@@ -5,7 +5,8 @@ const state = () => ({
     activeDocument: { title: '', content: {}, contentEnglish: {} },
     activeSection: '',
     sections: [],
-    html: ''
+    html: '',
+    resp: { out: '', err: '' },
 })
 
 const mutations = {
@@ -28,16 +29,19 @@ const mutations = {
     resetHTML(state) {
         state.html = ''
     },
+    setResp(state, value) {
+        state.resp = value
+    },
 }
 
 const actions = {
     saveDoc({rootState}) {
         axios.post('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content)
     },
-    sendCompilePost({rootState}) {
+    sendCompilePost({rootState, commit}) {
         axios.post('http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content).then(response => {
                 if (response.status === 200) {
-                    console.log('test')
+                    commit('setResp', response.data)
                 }
             }
         )

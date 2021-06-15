@@ -36,9 +36,9 @@
                             </v-btn-toggle>
                         </v-col>
                         <v-divider vertical class="ml-3 mr-3 mb-2 mt-3"></v-divider>
-                        <v-col v-if="activeModuleBilingual" class="ma-0 pa-0">
-                            <v-switch v-model="lang" class="mt-5" color="amber lighten-1" :label="`English Version: ${lang.toString()}`"></v-switch>
-                        </v-col>
+<!--                        <v-col v-if="activeModuleBilingual" class="ma-0 pa-0">-->
+<!--                            <v-switch v-model="lang" class="mt-5" color="amber lighten-1" :label="`English Version: ${lang.toString()}`"></v-switch>-->
+<!--                        </v-col>-->
                     </v-row>
                 </v-container>
             </div>

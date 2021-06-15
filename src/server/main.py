@@ -202,4 +202,6 @@ class Compile(Resource):
 
         logi = logic.Logic()
 
-        logi.compile(data=data, path=path, fileName=fileName)
+        resp = logi.compile(data=data, path=path, fileName=fileName)
+
+        return resp

@@ -1,18 +1,83 @@
 <template>
-    <p v-text="output"></p>
-<!--        <iframe class="preview fill-height"></iframe>-->
+    <v-container>
+<!--        <prev-doc v-if="output === 'doc'"></prev-doc>-->
+        <my-component v-if="output === 'doc'"></my-component>
+        <p v-else v-text="output.err"></p>
+    </v-container>
 </template>
 
 <script>
     import store from '../store'
+    import Vue from 'vue'
+    import axios from "axios";
+
+    // var prevDoc = Vue.component('prevDoc', function(resolve) {
+    //                 axios.get("../../PracticalTool/itis-praktika-master/Test/text/" + this.getFileName).then(response => {
+    //                     resolve({template: response.data})
+    //                 })
+    //              })
 
     export default {
         name: "PreviewContent",
         computed: {
             output() {
-                return store.state.document.activeDocument.content
+                let out = store.state.document.resp
+                if(out.err === "") {
+                    return "doc"
+                } else {
+                    return out
+                }
+            },
+            moduleName() {
+                let modName = store.state.module.selectedModule.name
+
+                if (modName.includes(" ")) {
+                    modName = modName.split(" ").join("")
+                }
+
+                console.log(modName)
+
+                return modName
+            },
+            documentName() {
+                let docName = store.state.module.selectedDocument.title
+
+                if (docName.includes(' ')) {
+                    docName = docName.split("").join("")
+                }
+
+                console.log(docName)
+
+                return docName
+            },
+            getFileName() {
+                let fileName = this.moduleName + "_" + this.documentName + ".html"
+
+                console.log(fileName)
+
+                return fileName
             }
         },
+        methods: {
+
+        },
+        components: {
+            // prevDoc
+
+            'my-component': () => {
+                Vue.component('prevDoc', function(resolve) {
+                    axios.get("../../PracticalTool/itis-praktika-master/Test/text/" + this.getFileName).then(response => {
+                        resolve({template: response.data})
+                    })
+                })
+            }
+            // import('../../PracticalTool/itis-praktika-master/Test/text/' + this.getFileName)
+            // Vue.component('prevDoc', function(resolve, reject) {
+            //     axios.get("../../PracticalTool/itis-praktika-master/Test/text/" + this.getFileName).then(response => {
+            //         resolve({template: response.data})
+            //     })
+            // })
+        }
     }
 </script>
 

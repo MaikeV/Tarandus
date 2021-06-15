@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import subprocess
@@ -155,14 +156,34 @@ class Logic:
 
         f.close()
 
-        dstPath = "../../../../PracticalTool/itis-praktika-master/Test/" + fileName
+        dstPath = "../../PracticalTool/itis-praktika-master/Test/" + fileName
 
-        shutil.copyfile(path, dstPath)
+        # shutil.copyfile(path, dstPath)
+        print(os.getcwd())
 
-        p = subprocess.Popen(['./command.sh', '/Test/' + fileName],
-                             cwd="../../../../PracticalTool/itis-praktika-master/",
+        cp = subprocess.Popen(['cp', path, dstPath])
+        cp.wait()
+
+        p = subprocess.Popen(['./compile.sh', 'Test/' + fileName],
+                             cwd="../../PracticalTool/itis-praktika-master/",
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
-        print(out)
+        # print(out)
+        # print(err)
 
         p.wait()
+
+        # out = json.dumps(out)
+        # err = json.dumps(err)
+
+        outNew = out.decode('utf-8')
+        errNew = err.decode('utf-8')
+
+        for e in errNew:
+            print("-" + e)
+
+        resp = {
+            "out": outNew,
+            "err": errNew
+        }
+        return resp
