@@ -1,6 +1,6 @@
 # from startup import *
 from flask_restx import Resource
-from flask import request
+from flask import request, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask import Flask
 from flask_restx import Api
@@ -145,7 +145,7 @@ class Documents(Resource):
 
         targetName = json.loads(request.data)
 
-        print(targetName)
+        # print(targetName)
 
         path = "../../files/modules/" + moduleName + '/'
         oldName = path + documentName + '.json'
@@ -174,7 +174,7 @@ class Documents(Resource):
         path = "../../files/modules/" + moduleName + '/' + documentName + '.json'
         pathEn = "../../files/modules/" + moduleName + '/' + documentName + '_EN.json'
         data = json.loads(request.data)
-        print(request.data)
+        # print(request.data)
         if Path(path).is_file():
             file = open(path, 'w')
             file.write(json.dumps(data))
@@ -205,3 +205,18 @@ class Compile(Resource):
         resp = logi.compile(data=data, path=path, fileName=fileName)
 
         return resp
+
+    def get(self, moduleName, documentName):
+        moduleName = moduleName.replace(" ", "")
+        documentName = documentName.replace(" ", "")
+
+        fileName = moduleName + "_" + documentName + ".pdf"
+        path = "../../PracticalTool/itis-praktika-master/Test/text/"
+
+        if Path(path + fileName).exists:
+            print(fileName)
+
+        try:
+            return send_from_directory(directory=path, filename=fileName, as_attachment=True)
+        except Exception as e:
+            return {}, 500

@@ -21,17 +21,17 @@ class Logic:
                         if mark['type'] == 'bold':
                             # ::b
                             text = text + '\n::b ' + content['text'] + '\n'
-                            print('this is bold' + content['text'])
+                            # print('this is bold' + content['text'])
 
                         elif mark['type'] == 'italic':
                             # ::k
                             text = text + '\n::k ' + content['text'] + '\n'
-                            print('this is italic' + content['text'])
+                            # print('this is italic' + content['text'])
 
                         elif mark['type'] == 'underline':
                             # ::u
                             text = text + '\n::u ' + content['text'] + '\n'
-                            print('this is underlined' + content['text'])
+                            # print('this is underlined' + content['text'])
 
                         elif mark['type'] == 'strike':
                             print('this is struck' + content['text'])
@@ -159,7 +159,7 @@ class Logic:
         dstPath = "../../PracticalTool/itis-praktika-master/Test/" + fileName
 
         # shutil.copyfile(path, dstPath)
-        print(os.getcwd())
+        # print(os.getcwd())
 
         cp = subprocess.Popen(['cp', path, dstPath])
         cp.wait()
@@ -179,11 +179,12 @@ class Logic:
         outNew = out.decode('utf-8')
         errNew = err.decode('utf-8')
 
-        for e in errNew:
-            print("-" + e)
+        # for e in errNew:
+        #     print("-" + e)
 
         resp = {
             "out": outNew,
             "err": errNew
         }
+
         return resp

@@ -10,8 +10,8 @@
                 <v-icon>mdi-download</v-icon>
             </v-btn>
         </v-app-bar>
-        <v-container class="scrollyPollyPreview">
-            <PreviewContent class="preview__content"></PreviewContent>
+        <v-container class="scrollyPollyPreview pa-0">
+            <PreviewContent class="preview__content ma-0 pa-0"></PreviewContent>
         </v-container>
     </v-container>
 </template>
@@ -57,7 +57,7 @@
 <style scoped>
 
     .scrollyPollyPreview {
-        overflow-y: scroll;
+
         position: fixed;
         width: 41.7%;
         height: 87%;
