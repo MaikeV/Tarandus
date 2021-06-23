@@ -3,7 +3,7 @@
         <v-app-bar clipped-left collapse-on-scroll color="blue darken-3">
             <v-toolbar-title>Chapter</v-toolbar-title>
         </v-app-bar>
-        <v-container class="scrollyPollyChapters">
+        <v-container :class="scrollyClass" id="scrollContainer">
             <v-treeview v-model="tree" :items="chapter" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
                 <template v-slot:prepend="{ item }">
                     <v-icon v-if="item.type === 'codeBlock'">mdi-code-tags</v-icon>
@@ -29,20 +29,35 @@
         computed: {
             chapter() {
                 return store.state.document.activeDocument.content.content
-                // let con = store.state.document.activeDocument.content.content
-
-
+            },
+            editorEnglish() {
+                return store.state.misc.editorEnglish
             }
         },
         methods: {
             parseChapters() {
-                console.log(JSON.parse(this.chapter.content).text)
+                // console.log(JSON.parse(this.chapter.content).text)
                 return JSON.parse(this.chapter.content).text
+            },
+            changeStyle(val) {
+                if(val) {
+                    document.getElementById('scrollContainer').classList.add("scrollyPollyChaptersEn")
+                    document.getElementById('scrollContainer').classList.remove("scrollyPollyChapters")
+                } else {
+                    document.getElementById('scrollContainer').classList.remove("scrollyPollyChaptersEn")
+                    document.getElementById('scrollContainer').classList.add("scrollyPollyChapters")
+                }
+            }
+        },
+        watch: {
+            editorEnglish(val) {
+                this.changeStyle(val)
             }
         },
         data() {
             return {
                 tree: [],
+                scrollyClass: store.state.misc.editorEnglish ? "scrollyPollyChaptersEn" : "scrollyPollyChapters",
                 onUpdate: () => {
                     Ebitor.getDocumentContent()
                 }
@@ -57,5 +72,12 @@
         position: fixed;
         height: 87%;
         width: 16.5%;
+    }
+
+    .scrollyPollyChaptersEn {
+        overflow-y: scroll;
+        position: fixed;
+        height: 87%;
+        width: 8.2%;
     }
 </style>

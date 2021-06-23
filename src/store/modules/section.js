@@ -3,13 +3,24 @@ const state = () => ({
         type: 'text',
         content: {}
     },
+    activeSectionEN: {
+        type: 'text',
+        content: {}
+    },
     sections: [],
 })
 
 const mutations = {
-    set(state, type) {
-        state.activeSection.type = type
-    }
+    set(state, data) {
+        let type = data[0]
+        let language = data[1]
+
+        if(language === 'german') {
+            state.activeSection.type = type
+        } else {
+            state.activeSectionEN.type = type
+        }
+    },
 }
 
 const actions = {}

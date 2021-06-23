@@ -66,6 +66,10 @@ class Modules(Resource):
 
                 for doc in Path(path + "/" + moduleName).glob('*.json'):
                     docString = doc.name.split(".", 1)
+
+                    if docString[0].endswith("_EN"): # only include german version of document in response
+                        continue
+
                     docDict = {"title": docString[0], "format": docString[1]}
                     docList.append(docDict)
 
@@ -80,22 +84,32 @@ class Modules(Resource):
 class Modules(Resource):
     # Create document in given module
     def post(self, moduleName):
-        # moduleName = moduleName.replace(" ", "")
-
         path = "../../files/modules/" + moduleName
 
         if Path(path).exists():
-            Path(path).touch()
+            # Path(path).touch()
 
             reqDict = json.loads(request.data)
 
-            file = open(path + "/" + reqDict['title'] + '.' + reqDict['format'], 'x')
+            fileName = path + "/" + reqDict['title']
+
+            file = open(fileName + '.' + reqDict['format'], 'x') #{"type": "doc", "content": [{"type": "paragraph", "content": []}]}
             file.close()
+
+            metaPath = path + "/" + moduleName + ".meta"
+
+            if Path(metaPath).exists() and Path(metaPath).is_file(): # check if module is bilingual
+                metaFile = open(metaPath, 'r')
+                module = json.loads(metaFile.read())
+
+                print(module['bilingual'])
+
+                if module['bilingual']: # create file for english version of document
+                    fileEn = open(fileName + "_EN." + reqDict['format'], 'x')
+                    fileEn.close()
 
     # Edit given module
     def put(self, moduleName):
-        # moduleName = moduleName.replace(" ", "")
-
         target = json.loads(request.data)
         path = "../../files/modules/"
 
@@ -113,8 +127,6 @@ class Modules(Resource):
 
     # Delete given module
     def delete(self, moduleName):
-        # moduleName = moduleName.replace(" ", "")
-
         path = "../../files/modules/" + moduleName
 
         if Path(path).exists():
@@ -130,19 +142,17 @@ class Modules(Resource):
 class Documents(Resource):
     # Delete given document in given module
     def delete(self, moduleName, documentName):
-        # moduleName = moduleName.replace(" ", "")
-        # documentName = documentName.replace(" ", "")
-
         path = "../../files/modules/" + moduleName + '/' + documentName + '.json'
+        pathEn = "../../files/modules/" + moduleName + '/' + documentName + '_EN.json'
 
         if Path(path).is_file():
             os.remove(path)
 
+        if Path(pathEn).is_file():
+            os.remove(pathEn)
+
     # Rename given document
     def put(self, moduleName, documentName):
-        # moduleName = moduleName.replace(" ", "")
-        # documentName = documentName.replace(" ", "")
-
         targetName = json.loads(request.data)
 
         # print(targetName)
@@ -151,34 +161,55 @@ class Documents(Resource):
         oldName = path + documentName + '.json'
         newName = path + targetName['title'] + '.json'
 
+        oldNameEn = path + documentName + '_EN.json'
+        newNameEn = path + targetName['title'] + '_EN.json'
+
         if Path(oldName).is_file():
             Path(oldName).rename(newName)
 
+        if Path(oldNameEn).is_file():
+            Path(oldNameEn).rename(newNameEn)
+
     # Load given document
     def get(self, moduleName, documentName):
-        # moduleName = moduleName.replace(" ", "")
-        # documentName = documentName.replace(" ", "")
-
         path = "../../files/modules/" + moduleName + '/' + documentName + ".json"
+        pathEn = "../../files/modules/" + moduleName + '/' + documentName + "_EN.json"
 
-        file = open(path, "r")
-        document = json.dumps(file.read())
-        file.close()
+        resp = {
+            "german": '',
+            "english": '',
+        }
 
-        return document
+        if Path(path).exists() and Path(path).is_file():
+            file = open(path, "r")
+            document = json.dumps(file.read())
+            file.close()
+            resp['german'] = document
+
+        if Path(pathEn).exists() and Path(pathEn).is_file():
+            file = open(pathEn, "r")
+            document = json.dumps(file.read())
+            file.close()
+            resp['english'] = document
+
+        return resp
 
     # Save given document
     def post(self, moduleName, documentName):
-        # moduleName = moduleName.replace(" ", "")
-        # documentName = documentName.replace(" ", "")
         path = "../../files/modules/" + moduleName + '/' + documentName + '.json'
         pathEn = "../../files/modules/" + moduleName + '/' + documentName + '_EN.json'
         data = json.loads(request.data)
         # print(request.data)
         if Path(path).is_file():
             file = open(path, 'w')
-            file.write(json.dumps(data))
+            file.write(json.dumps(data['content']))
             file.close()
+
+            if Path(pathEn).exists() and Path(pathEn).is_file():
+                fileEn = open(pathEn, 'w')
+                fileEn.write(json.dumps(data['contentEnglish']))
+                fileEn.close()
+
             return
         else:
             print('Error while saving changes to document')

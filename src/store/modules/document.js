@@ -1,35 +1,73 @@
 import axios from "axios";
-// import router from "../../router";
-
 
 const state = () => ({
     activeDocument: { title: '', content: {}, contentEnglish: {} },
     activeSection: '',
+    activeSectionEN: '',
     sections: [],
     html: '',
+    htmlEN: '',
     resp: { out: '', err: '' },
     pdfUrl: '',
 })
 
 const mutations = {
-    setContent(state, content) {
-        state.activeDocument.content = JSON.parse(content)
+    setContent(state, data) {
+        let content = data[0]
+        let language = data[1]
+
+        if (language === 'german') {
+            state.activeDocument.content = JSON.parse(content)
+        } else {
+            state.activeDocument.contentEnglish = JSON.parse(content)
+        }
     },
-    setContent2(state, content) {
-        state.activeDocument.content = content
+    setContent2(state, data) {
+        let content = data[0]
+        let language = data[1]
+
+        if (language === 'german') {
+            state.activeDocument.content = content
+        } else {
+            state.activeDocument.contentEnglish = content
+        }
+    },
+    setBilingualContent(state, data) {
+        let german = data[0]
+        let english = data[1]
+
+        console.log("bilicon")
+        console.log(JSON.parse(english))
+
+        state.activeDocument.content = JSON.parse(german)
+        state.activeDocument.contentEnglish = JSON.parse(english)
     },
     setTitle(state, title) {
         state.activeDocument.title = title
     },
-    setActiveSection(state) {
-        state.activeSection = JSON.parse(state.activeDocument.content)
+    setActiveSection(state, language) {
+        if(language === 'german') {
+            state.activeSection = JSON.parse(state.activeDocument.content)
+        } else {
+            state.activeSectionEN = JSON.parse(state.activeDocument.contentEnglish)
+        }
     },
-    setHTML(state, value) {
-        console.log('val: ' + value.toString())
-        state.html = value
+    setHTML(state, data) {
+        let value = data[0]
+        let language = data[1]
+
+        if(language === 'german') {
+            state.html = value
+        } else {
+            state.htmlEN = value
+        }
     },
-    resetHTML(state) {
-        state.html = ''
+    resetHTML(state, language) {
+        if(language === 'german') {
+            state.html = ''
+        } else {
+            state.htmlEN = ''
+        }
     },
     setResp(state, value) {
         state.resp = value
@@ -43,7 +81,7 @@ const mutations = {
 
 const actions = {
     saveDoc({rootState}) {
-        axios.post('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content)
+        axios.post('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument)
     },
     sendCompilePost({rootState, commit}) {
         axios.post('http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content).then(response => {
@@ -56,7 +94,6 @@ const actions = {
                             commit('pdfFile', response.data)
 
                             document.getElementById('docPrev').innerHTML = '<embed class="pdf ma-0 pa-0"/>'
-                            console.log(rootState.document.pdfUrl)
                             document.querySelector("embed").src = rootState.document.pdfUrl
                     })
                 }
