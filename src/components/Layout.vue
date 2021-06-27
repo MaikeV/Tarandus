@@ -42,7 +42,7 @@
         created() {
             this.$vuetify.theme.themes.dark.primary = colors.blue.darken4;
             this.$vuetify.theme.dark = true
-        }
+        },
     }
 </script>
 

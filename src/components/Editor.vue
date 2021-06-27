@@ -39,6 +39,10 @@
                         <v-col v-if="activeModuleBilingual && language === 'german'" class="ma-0 pa-0">
                             <v-switch v-model="lang" class="mt-5" color="amber lighten-1" label="English"></v-switch>
                         </v-col>
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="reloadContent">
+                            <v-icon>mdi-refresh</v-icon>
+                        </v-btn>
                     </v-row>
                 </v-container>
             </div>
@@ -432,6 +436,13 @@
                 } else {
                     document.getElementById('contentContainer').classList.remove('scrollyPollyEn')
                     document.getElementById('contentContainer').classList.add('scrollyPolly')
+                }
+            },
+            reloadContent() {
+                if (this.editor && this.language === "german") {
+                    this.editor.commands.setContent(this.documentContent)
+                } else if(this.editorEnglish && this.language === "english") {
+                    this.editorEnglish.commands.setContent(this.documentContentEnglish)
                 }
             }
         },

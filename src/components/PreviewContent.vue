@@ -1,18 +1,14 @@
 <template class="pa-0">
     <v-container class="pa-0">
-<!--        <prev-doc v-if="output === 'doc'"></prev-doc>-->
-<!--        <doc-prev v-if="output === 'doc'"></doc-prev>-->
-<!--        <div v-if="output.err === 'doc'" v-text="getCompiledDoc"></div>-->
-<!--        <div v-if="output.err === 'doc'" v-html="prevData"></div>-->
-<!--        <v-btn @click="getDocPrev"></v-btn>-->
-        <div id="docPrev" class="ma-0 pa-0">
+        <div v-if="lang === 'english'" id="docPrevEn" class="ma-0 pa-0">
 
         </div>
-        <p v-text="getPDF"></p>
-<!--        <pdf :src="getDocument"></pdf>-->
-<!--        <iframe v-if="output === 'doc'" src="localhost:8080/docs/TestModule_TestTest.html"></iframe>-->
-<!--        <iframe :src="prevData"></iframe>-->
-        <p  v-text="output.err"></p>
+        <div v-if="lang === 'german'" id="docPrev" class="ma-0 pa-0">
+
+        </div>
+<!--        <p v-if="lang === 'english'" v-text="getPDFEn"></p>-->
+<!--        <p v-else v-text="getPDF"></p>-->
+        <p v-text="output.err"></p>
     </v-container>
 </template>
 
@@ -24,13 +20,28 @@
 
     export default {
         name: "PreviewContent",
+        props: ['lang'],
+        created() {
+            console.log("Preview Content created for language: " + this.lang)
+        },
         computed: {
             output() {
-                let out = store.state.document.resp
-                if(out.err === "") {
-                    return "doc"
+                if(this.lang === "english") {
+                    let out = store.state.document.resp.respEn
+
+                    if(out.err === "") {
+                        return "doc"
+                    } else {
+                        return out
+                    }
                 } else {
-                    return out
+                    let out = store.state.document.resp.respGer
+
+                    if(out.err === "") {
+                        return "doc"
+                    } else {
+                        return out
+                    }
                 }
             },
             moduleName() {
@@ -56,7 +67,13 @@
                 return docName
             },
             getFileName() {
-                let fileName = this.moduleName + "_" + this.documentName + ".pdf"
+                let fileName = ''
+
+                if(this.lang === "english") {
+                    fileName = this.moduleName + "_" + this.documentName + "_EN.pdf"
+                } else {
+                    fileName = this.moduleName + "_" + this.documentName + ".pdf"
+                }
 
                 console.log(fileName)
 
@@ -64,6 +81,9 @@
             },
             getPDF() {
                 return store.state.document.pdfUrl
+            },
+            getPDFEn() {
+                return store.state.document.pdfUrlEn
             }
         },
         methods: {
@@ -103,6 +123,10 @@
 
 <style lang="scss">
     #docPrev {
+        height: 100%;
+    }
+
+    #docPrevEn {
         height: 100%;
     }
 

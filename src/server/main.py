@@ -228,12 +228,28 @@ class Compile(Resource):
         fileName = moduleName + "_" + documentName + ".py"
         path = "../../files/output/" + fileName
 
+        fileNameEn = moduleName + "_" + documentName + "_EN.py"
+        pathEn = "../../files/output/" + fileNameEn
+
         print('############################### \njsonDict: ' + '\n\n')
         # print(data['content'])
 
         logi = logic.Logic()
 
-        resp = logi.compile(data=data, path=path, fileName=fileName)
+        respGer = logi.compile(data=data['content'], path=path, fileName=fileName)
+
+        respEn = {
+            "out": '',
+            "err": 'No english version of document found'
+        }
+
+        if data['contentEnglish'] != "":
+            respEn = logi.compile(data=data['contentEnglish'], path=pathEn, fileName=fileNameEn)
+
+        resp = {
+            "respGer": respGer,
+            "respEn": respEn
+        }
 
         return resp
 
@@ -241,7 +257,18 @@ class Compile(Resource):
         moduleName = moduleName.replace(" ", "")
         documentName = documentName.replace(" ", "")
 
-        fileName = moduleName + "_" + documentName + ".pdf"
+        language = request.args.get('lang')
+
+        fileName = moduleName + "_" + documentName
+
+        if language == "DE":
+            fileName = fileName + ".pdf"
+        elif language == "EN":
+            fileName = fileName + "_EN.pdf"
+        else:
+            print("file in language " + language + " does not exist")
+            return {}, 500
+
         path = "../../PracticalTool/itis-praktika-master/Test/text/"
 
         if Path(path + fileName).exists:

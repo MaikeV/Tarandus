@@ -7,8 +7,12 @@ const state = () => ({
     sections: [],
     html: '',
     htmlEN: '',
-    resp: { out: '', err: '' },
+    resp: {
+        respGer: { out: '', err: '' },
+        respEn: { out: '', err: '' },
+    },
     pdfUrl: '',
+    pdfUrlEn: '',
 })
 
 const mutations = {
@@ -76,6 +80,11 @@ const mutations = {
         let url = window.url || window.webkitURL
 
         state.pdfUrl = url.createObjectURL(data)
+    },
+    pdfFileEn(state, data) {
+        let url = window.url || window.webkitURL
+
+        state.pdfUrlEn = url.createObjectURL(data)
     }
 }
 
@@ -84,17 +93,27 @@ const actions = {
         axios.post('http://localhost:5000/tarandus/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument)
     },
     sendCompilePost({rootState, commit}) {
-        axios.post('http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument.content).then(response => {
+        axios.post('http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/', rootState.document.activeDocument).then(response => {
             if (response.status === 200) {
                 commit('setResp', response.data)
 
-                if (rootState.document.resp.err === "") {
+                if (rootState.document.resp.respGer.err === "") {
                     axios.get( 'http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/',
-                        {responseType: "blob", headers: {'Accept': '*/*', 'Content-Type': 'application/pdf'}}).then(response =>{
+                        {responseType: "blob", headers: {'Accept': '*/*', 'Content-Type': 'application/pdf'}, params: { lang: "DE" }}).then(response =>{
                             commit('pdfFile', response.data)
 
-                            document.getElementById('docPrev').innerHTML = '<embed class="pdf ma-0 pa-0"/>'
-                            document.querySelector("embed").src = rootState.document.pdfUrl
+                            document.getElementById('docPrev').innerHTML = '<embed id="pdfViewGerman" v-if="lang === \'german\'" class="pdf ma-0 pa-0"/>'
+                            document.querySelector("#pdfViewGerman").src = rootState.document.pdfUrl
+                    })
+                }
+
+                if(rootState.document.resp.respEn.err === "") {
+                    axios.get( 'http://localhost:5000/tarandus/compile/' + rootState.module.selectedModule.name + '/' + rootState.module.selectedDocument.title + '/',
+                        {responseType: "blob", headers: {'Accept': '*/*', 'Content-Type': 'application/pdf'}, params: { lang: "EN" }}).then(response =>{
+                        commit('pdfFileEn', response.data)
+
+                        document.getElementById('docPrevEn').innerHTML = '<embed id="pdfViewEnglish" v-if="lang === \'english\'" class="pdf ma-0 pa-0"/>'
+                        document.querySelector("#pdfViewEnglish").src = rootState.document.pdfUrlEn
                     })
                 }
             }

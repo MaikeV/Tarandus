@@ -3,8 +3,22 @@ import os
 import shutil
 import subprocess
 
+from pathlib import Path
+
 
 class Logic:
+
+    def checkBilingual(self, moduleName):
+        metaPath = "../../files/modules/" + moduleName + "/" + moduleName + ".meta"
+
+        module = False
+
+        if Path(metaPath).exists() and Path(metaPath).is_file():  # check if module is bilingual
+            metaFile = open(metaPath, 'r')
+            module = json.loads(metaFile.read())['bilingual']
+
+        return module
+
     def processText(self, contentList):
         text = ''
         for content in contentList:
@@ -44,6 +58,8 @@ class Logic:
         return text
 
     def compile(self, data, path, fileName):
+        print("Compiling " + fileName + "...")
+
         text = '# -*- coding: utf-8 -*-' + \
             '\nwrite_file = 1' + \
             '\n\nimport os, os.path, sys, inspect, pprint, re, time' + \
@@ -186,5 +202,7 @@ class Logic:
             "out": outNew,
             "err": errNew
         }
+
+        print("Finished compiling of " + fileName)
 
         return resp
