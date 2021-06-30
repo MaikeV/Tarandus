@@ -4,15 +4,15 @@
             <v-toolbar-title>Chapter</v-toolbar-title>
         </v-app-bar>
         <v-container :class="scrollyClass" id="scrollContainer">
-            <v-treeview v-model="tree" :items="chapter" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
+            <v-treeview v-model="tree" :items="buildTree" item-key="content.text" item-text="content" open-on-click dark color="blue darken-4" selected-color="blue darken-4">
                 <template v-slot:prepend="{ item }">
-                    <v-icon v-if="item.type === 'codeBlock'">mdi-code-tags</v-icon>
+                    <v-icon v-if="item.type === 'codeBlock'" class="ml-2">mdi-code-tags</v-icon>
                     <v-icon v-else-if="item.type === 'heading'">mdi-bookmark-outline</v-icon>
-                    <v-icon v-else-if="item.type === 'orderedList'">mdi-format-list-numbered</v-icon>
-                    <v-icon v-else-if="item.type === 'bulletList'">mdi-format-list-bulleted</v-icon>
-                    <v-icon v-else-if="item.type === 'expansionPanel'">mdi-chevron-down</v-icon>
-                    <v-icon v-else-if="item.type === 'snippet'">mdi-slash-forward</v-icon>
-                    <v-icon v-else-if="item.type === 'command'">mdi-language-python</v-icon>
+                    <v-icon v-else-if="item.type === 'orderedList'" class="ml-2">mdi-format-list-numbered</v-icon>
+                    <v-icon v-else-if="item.type === 'bulletList'" class="ml-2">mdi-format-list-bulleted</v-icon>
+                    <v-icon v-else-if="item.type === 'expansionPanel'" class="ml-2">mdi-chevron-down</v-icon>
+                    <v-icon v-else-if="item.type === 'snippet'" class="ml-2">mdi-slash-forward</v-icon>
+                    <v-icon v-else-if="item.type === 'command'" class="ml-2">mdi-language-python</v-icon>
                     <v-icon v-else>mdi-card-text-outline</v-icon>
                 </template>
             </v-treeview>
@@ -32,9 +32,60 @@
             },
             editorEnglish() {
                 return store.state.misc.editorEnglish
+            },
+            buildTree() {
+                let chapters = store.state.document.activeDocument.content.content
+
+                let a =this.buildEnhancedChapterTree(chapters)
+                console.log(a)
+                return a
             }
         },
         methods: {
+            buildEnhancedChapterTree(lst, mode){
+                if(lst.length === 0 ){
+                    return []
+                }
+                if (lst.length === 1){
+                    return [lst[0]]
+                }
+
+                let [head, ...tail] = lst
+
+                if(head.type === 'heading'){
+                    if (mode) {
+                        return []
+                    }
+
+                    head.children = this.buildEnhancedChapterTree(tail, true)
+                    tail = tail.slice(head.children.length)
+
+                    if(tail.length > 0 ) {
+                        return [head, ...this.buildEnhancedChapterTree(tail, false)]
+                    }
+                    
+                    return [head]
+                }
+
+                return [head, ...this.buildEnhancedChapterTree(tail, mode)]
+            },
+
+            buildChapterTree(lst) {
+                if(lst.length === 1) {
+                    return [lst[0]]
+                }
+
+                let [head, ...tail] = lst
+
+                if (head.type === 'heading') {
+                    head.children = this.buildChapterTree(tail)
+                    return [head]
+                }
+
+                let res = this.buildChapterTree(tail)
+                res.unshift(head)
+                return res
+            },
             parseChapters() {
                 // console.log(JSON.parse(this.chapter.content).text)
                 return JSON.parse(this.chapter.content).text
@@ -58,6 +109,7 @@
             return {
                 tree: [],
                 scrollyClass: store.state.misc.editorEnglish ? "scrollyPollyChaptersEn" : "scrollyPollyChapters",
+                documentTitle: store.state.document.activeDocument.title,
                 onUpdate: () => {
                     Ebitor.getDocumentContent()
                 }
